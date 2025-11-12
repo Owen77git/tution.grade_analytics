@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard — Student Performance Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --panel:#111827;
+      --muted:#9aa4b2;
+      --accent:#2dd4bf;
+      --accent2:#60a5fa;
+      --danger:#fb7185;
+      --warning:#fbbf24;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.03);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071025 0%, #071525 60%);color:#e6eef8}
+    .app{display:flex;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{width:260px;background:linear-gradient(180deg,#061426,#081b30);padding:28px 18px;box-shadow: 6px 0 20px rgba(2,6,23,0.6); position: fixed; height: 100vh; overflow-y: auto;}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .brand .logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
+    .brand h1{font-size:16px;margin:0}
+    .user{display:flex;gap:12px;align-items:center;margin-bottom:22px}
+    .avatar{width:44px;height:44px;border-radius:8px;background:#0b1622;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .nav{margin-top:12px}
+    .nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--muted);text-decoration:none;margin-bottom:6px; transition: all 0.2s; cursor: pointer;}
+    .nav a:hover{background:rgba(255,255,255,0.02);}
+    .nav a.active{background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);color:#fff}
+
+    /* Main area */
+    .main{flex:1;display:flex;flex-direction:column;margin-left:260px; padding: 20px 28px;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .search{display:flex;align-items:center;gap:10px;background:var(--glass);padding:10px 12px;border-radius:10px;max-width:560px; flex: 1;}
+    .search input{background:transparent;border:0;outline:none;color:#cfe6ff;font-size:14px; width: 100%;}
+    .top-actions{display:flex;gap:12px;align-items:center}
+    .badge{background:#ef4444;color:#fff;padding:6px 10px;border-radius:999px;font-weight:600}
+
+    /* Cards grid */
+    .top-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:30px}
+    .card{background:var(--card);border-radius:12px;padding:20px;cursor:pointer;transition:0.3s;display:flex;flex-direction:column;justify-content:space-between;}
+    .card:hover{transform:translateY(-4px)}
+    .card h3{margin:0;font-size:16px}
+    .card .value{font-size:26px;font-weight:700}
+    .card .desc{font-size:13px;color:var(--muted)}
+    .card:nth-child(1){background:linear-gradient(135deg,#6366f1,#3b82f6)}
+    .card:nth-child(2){background:linear-gradient(135deg,#ec4899,#db2777)}
+    .card:nth-child(3){background:linear-gradient(135deg,#10b981,#059669)}
+    .card:nth-child(4){background:linear-gradient(135deg,#f59e0b,#d97706)}
+
+    /* Chart container */
+    .chart-box{background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px}
+    .chart-container{position:relative;height:300px;margin-bottom:20px}
+
+    /* Recommendations section */
+    .recommendations{margin-top:20px}
+    .recommendation-card{background:var(--card);border-radius:8px;padding:16px;margin-bottom:16px;border-left:4px solid var(--accent)}
+    .recommendation-card.warning{border-left-color:var(--warning)}
+    .recommendation-card.danger{border-left-color:var(--danger)}
+    .recommendation-card h4{margin:0 0 8px 0;color:var(--accent)}
+    .recommendation-card.warning h4{color:var(--warning)}
+    .recommendation-card.danger h4{color:var(--danger)}
+    .recommendation-card p{margin:0;font-size:14px;color:var(--muted)}
+
+    /* Analytics charts */
+    .analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+    .analytics-card{background:var(--card);border-radius:8px;padding:20px;height:300px;margin-bottom:20px}
+    .analytics-card h4{margin:0 0 12px 0;color:var(--accent)}
+
+    /* List tables */
+    .list{margin-top:12px}
+    .list table{width:100%;border-collapse:collapse}
+    .list th{font-size:12px;color:var(--muted);text-align:left;padding:8px}
+    .list td{padding:8px;border-top:1px solid rgba(255,255,255,0.02)}
+
+    /* Buttons */
+    .btn{padding:8px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer;font-weight:600;transition:all 0.2s;}
+    .btn:hover{opacity:0.9;transform:translateY(-1px);}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);}
+    .btn.danger{background:var(--danger);color:white;}
+    .btn.warning{background:var(--warning);color:#021;}
+
+    /* Table actions */
+    .table-actions{display:flex;gap:8px;margin-bottom:16px;align-items:center;justify-content:space-between;}
+    .action-btn{padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;border:none;}
+    .action-btn.delete{background:rgba(251,113,133,0.1);color:var(--danger);}
+    .action-btn.edit{background:rgba(96,165,250,0.1);color:var(--accent2);}
+
+    /* Modal */
+    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(2,6,23,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+    .modal{background:var(--panel);border-radius:12px;box-shadow:0 20px 60px rgba(2,6,23,0.8);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+    .modal-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;}
+    .modal-header h2{font-size:18px;color:var(--accent);margin:0;}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+    .modal-body{padding:20px;}
+    .modal-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:flex-end;gap:10px;}
+
+    /* Form elements */
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;margin-bottom:6px;font-size:14px;color:var(--muted);}
+    .form-control{width:100%;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#e6eef6;font-size:14px;}
+    .form-control:focus{outline:none;border-color:var(--accent);}
+
+    /* Flash messages */
+    .flash-messages{position:fixed;top:20px;right:20px;z-index:1000;max-width:400px;}
+    .flash-message{padding:12px 16px;border-radius:8px;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+    .flash-message.success{background:var(--accent);color:#021;}
+    .flash-message.error{background:var(--danger);color:white;}
+    .flash-message.info{background:var(--accent2);color:white;}
+
+    /* Hidden utility */
+    .hidden{display:none !important;}
+    
+    /* Export options */
+    .export-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+    .export-btn{padding:6px 12px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--muted);cursor:pointer;font-size:12px;transition:all 0.2s;}
+    .export-btn:hover{background:rgba(255,255,255,0.1);color:var(--accent);}
+
+    /* Data summary */
+    .data-summary{font-size:12px;color:var(--muted);line-height:1.4;margin-top:12px}
+
+    /* Logout button */
+    .logout-btn{background:transparent;border:1px solid var(--muted);color:var(--muted);padding:8px 16px;border-radius:6px;cursor:pointer;transition:0.2s;width:100%;margin-top:10px;}
+    .logout-btn:hover{border-color:var(--danger);color:var(--danger);}
+
+    /* responsive */
+    @media (max-width:980px){
+      .sidebar{display:none}
+      .main{margin-left:0;}
+      .top-cards{grid-template-columns:repeat(2,1fr)}
+      .analytics-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:640px){
+      .top-cards{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">MA</div><div><h1>Master Admin</h1><div style="font-size:12px;color:var(--muted)">Analytics Dashboard</div></div></div>
+      <div class="user"><div class="avatar">AD</div><div><div style="font-weight:700">Admin User</div><div style="font-size:12px;color:var(--muted)">Super Admin</div></div></div>
+      <nav class="nav">
+        <a href="#" class="active" data-panel="overview">System Overview</a>
+        <a href="#" data-panel="students">All Students</a>
+        <a href="#" data-panel="teachers">All Teachers</a>
+        <a href="#" data-panel="logs">System Logs</a>
+        <a href="#" data-panel="settings">Settings</a>
+        <button class="logout-btn" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+      </nav>
+      <div style="position:absolute;bottom:18px;left:18px;font-size:12px;color:var(--muted)">© 2025 Tutoring Analytics</div>
+    </aside>
+
+    <main class="main">
+      <!-- Flash Messages -->
+      <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <div class="topbar">
+        <div class="search">
+          <svg height="16" width="16" viewBox="0 0 24 24" fill="none">
+            <path d="M21 21l-4.35-4.35" stroke="#9aa4b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="11" cy="11" r="6" stroke="#9aa4b2" stroke-width="2"></circle>
+          </svg>
+          <input placeholder="Search students, teachers, exams..." id="globalSearch" />
+        </div>
+        <div class="top-actions">
+          <div class="badge" id="alertCount">0</div>
+          <div style="font-size:13px;color:var(--muted)">Admin • Online</div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW PANEL -->
+      <div class="panel-content" id="overview-panel">
+        <section class="top-cards">
+          <div class="card">
+            <h3>Total Students</h3>
+            <div class="value" id="totalStudents">0</div>
+            <div class="desc">Across all classes</div>
+          </div>
+          <div class="card">
+            <h3>Active Teachers</h3>
+            <div class="value" id="totalTeachers">0</div>
+            <div class="desc">Teaching currently</div>
+          </div>
+          <div class="card">
+            <h3>Avg Performance</h3>
+            <div class="value" id="avgPerformance">0%</div>
+            <div class="desc">Overall average score</div>
+          </div>
+          <div class="card">
+            <h3>Tests Recorded</h3>
+            <div class="value" id="totalTests">0</div>
+            <div class="desc">All time tests</div>
+          </div>
+        </section>
+
+        <section class="chart-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h2>System Performance Overview</h2>
+            <div class="export-options">
+              <button class="export-btn" id="refreshData">Refresh Data</button>
+              <button class="export-btn" id="exportChartData">Export Chart Data</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </section>
+
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h4>Performance by Subject</h4>
+            <div class="chart-container">
+              <canvas id="subjectChart"></canvas>
+            </div>
+            <div class="data-summary" id="subjectSummary">
+              Loading subject analysis...
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h4>Performance by Day</h4>
+            <div class="chart-container">
+              <canvas id="dayChart"></canvas>
+            </div>
+            <div class="data-summary" id="daySummary">
+              Loading day analysis...
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h4>Teacher Performance</h4>
+            <div class="chart-container">
+              <canvas id="teacherChart"></canvas>
+            </div>
+            <div class="data-summary" id="teacherSummary">
+              Loading teacher analysis...
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h4>Topic Performance</h4>
+            <div class="chart-container">
+              <canvas id="topicChart"></canvas>
+            </div>
+            <div class="data-summary" id="topicSummary">
+              Loading topic analysis...
+            </div>
+          </div>
+        </div>
+
+        <section class="recommendations">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h3>System Recommendations</h3>
+            <button class="export-btn" id="refreshRecommendations">Refresh Recommendations</button>
+          </div>
+          <div id="recommendations-container">
+            <div class="recommendation-card">
+              <h4>Loading System Recommendations...</h4>
+              <p>Analyzing system data to provide management suggestions...</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- STUDENTS PANEL -->
+      <div class="panel-content hidden" id="students-panel">
+        <section class="chart-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h2>All Students</h2>
+            <div>
+              <button class="btn" id="addStudentBtn">Add Student</button>
+              <button class="btn ghost" id="exportStudentsReport">Export Report</button>
+            </div>
+          </div>
+
+          <div class="table-actions">
+            <input type="text" class="form-control" style="max-width:300px;" placeholder="Search students..." id="studentSearch">
+            <div style="display:flex;gap:8px">
+              <button class="btn ghost" id="exportStudentsBtn">Export List</button>
+              <button class="btn ghost" id="refreshStudents">Refresh</button>
+            </div>
+          </div>
+
+          <div class="list">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>Username</th>
+                  <th>Grade Level</th>
+                  <th>Avg Grade</th>
+                  <th>Tests</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTable">
+                <tr><td colspan="8" style="text-align:center;color:var(--muted)">Loading students...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- TEACHERS PANEL -->
+      <div class="panel-content hidden" id="teachers-panel">
+        <section class="chart-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h2>All Teachers</h2>
+            <div>
+              <button class="btn" id="addTeacherBtn">Add Teacher</button>
+              <button class="btn ghost" id="exportTeachersReport">Export Report</button>
+            </div>
+          </div>
+
+          <div class="table-actions">
+            <input type="text" class="form-control" style="max-width:300px;" placeholder="Search teachers..." id="teacherSearch">
+            <div style="display:flex;gap:8px">
+              <button class="btn ghost" id="exportTeachersBtn">Export List</button>
+              <button class="btn ghost" id="refreshTeachers">Refresh</button>
+            </div>
+          </div>
+
+          <div class="list">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Username</th>
+                  <th>Subjects</th>
+                  <th>Students</th>
+                  <th>Avg Impact</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teachersTable">
+                <tr><td colspan="7" style="text-align:center;color:var(--muted)">Loading teachers...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- LOGS PANEL -->
+      <div class="panel-content hidden" id="logs-panel">
+        <section class="chart-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h2>System Logs</h2>
+            <div>
+              <button class="btn ghost" id="exportLogsBtn">Export Logs</button>
+              <button class="btn" id="refreshLogsBtn">Refresh</button>
+            </div>
+          </div>
+
+          <div class="list">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Status</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="logsTable">
+                <tr><td colspan="5" style="text-align:center;color:var(--muted)">Loading logs...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- SETTINGS PANEL -->
+      <div class="panel-content hidden" id="settings-panel">
+        <section class="chart-box">
+          <h2>System Settings</h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+            <div>
+              <h4>System Configuration</h4>
+              <div class="form-group">
+                <label for="systemName">System Name</label>
+                <input type="text" class="form-control" id="systemName" value="Student Performance Analytics">
+              </div>
+              <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select class="form-control" id="timezone">
+                  <option>Eastern Time (ET)</option>
+                  <option selected>Central Time (CT)</option>
+                  <option>Pacific Time (PT)</option>
+                </select>
+              </div>
+              <button class="btn" id="saveSettingsBtn">Save Settings</button>
+            </div>
+            <div>
+              <h4>Data Management</h4>
+              <div class="form-group">
+                <button class="btn" style="width:100%;margin-bottom:8px" id="exportAllData">Export All Data</button>
+                <button class="btn ghost" style="width:100%;margin-bottom:8px" id="backupSystemData">Backup Database</button>
+                <button class="btn danger" style="width:100%" id="clearTestData">Clear Test Data</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Teacher Modal -->
+  <div class="modal-overlay hidden" id="addTeacherModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Teacher</h2>
+        <button class="modal-close" id="closeAddTeacherModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="teacherFullName">Full Name</label>
+          <input type="text" class="form-control" id="teacherFullName" placeholder="Enter teacher's full name">
+        </div>
+        <div class="form-group">
+          <label for="teacherUsername">Username</label>
+          <input type="text" class="form-control" id="teacherUsername" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="teacherEmail">Email</label>
+          <input type="email" class="form-control" id="teacherEmail" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="teacherSubjects">Subjects</label>
+          <input type="text" class="form-control" id="teacherSubjects" placeholder="e.g., Mathematics, Science">
+        </div>
+        <div class="form-group">
+          <label for="teacherPassword">Password</label>
+          <input type="password" class="form-control" id="teacherPassword" placeholder="Enter password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn ghost" id="cancelAddTeacher">Cancel</button>
+        <button class="btn" id="confirmAddTeacher">Add Teacher</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay hidden" id="addStudentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Student</h2>
+        <button class="modal-close" id="closeAddStudentModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="studentFullName">Full Name</label>
+          <input type="text" class="form-control" id="studentFullName" placeholder="Enter student's full name">
+        </div>
+        <div class="form-group">
+          <label for="studentUsername">Username</label>
+          <input type="text" class="form-control" id="studentUsername" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="studentEmail">Email</label>
+          <input type="email" class="form-control" id="studentEmail" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="studentId">Student ID</label>
+          <input type="text" class="form-control" id="studentId" placeholder="Enter student ID">
+        </div>
+        <div class="form-group">
+          <label for="studentGradeLevel">Grade Level</label>
+          <input type="text" class="form-control" id="studentGradeLevel" placeholder="e.g., Form 4">
+        </div>
+        <div class="form-group">
+          <label for="studentPassword">Password</label>
+          <input type="password" class="form-control" id="studentPassword" placeholder="Enter password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn ghost" id="cancelAddStudent">Cancel</button>
+        <button class="btn" id="confirmAddStudent">Add Student</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Global variables
+    let adminCharts = {};
+    let currentUsers = [];
+    let currentTeachers = [];
+    let currentStudents = [];
+    let currentLogs = [];
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      setupNavigation();
+      loadDashboardData();
+      setupEventListeners();
+      setTimeout(hideFlashMessages, 5000);
+    });
+
+    function setupNavigation() {
+      document.querySelectorAll('.nav a').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Update active nav link
+          document.querySelectorAll('.nav a').forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Show corresponding panel
+          const panel = this.getAttribute('data-panel');
+          document.querySelectorAll('.panel-content').forEach(p => p.classList.add('hidden'));
+          document.getElementById(`${panel}-panel`).classList.remove('hidden');
+          
+          // Load panel-specific data
+          loadPanelData(panel);
+        });
+      });
+    }
+
+    function setupEventListeners() {
+      // Refresh buttons
+      document.getElementById('refreshData').addEventListener('click', loadDashboardData);
+      document.getElementById('refreshLogsBtn').addEventListener('click', loadLogsData);
+      document.getElementById('refreshStudents').addEventListener('click', loadStudentsData);
+      document.getElementById('refreshTeachers').addEventListener('click', loadTeachersData);
+      document.getElementById('refreshRecommendations').addEventListener('click', loadRecommendations);
+
+      // Add buttons
+      document.getElementById('addTeacherBtn').addEventListener('click', function() {
+        document.getElementById('addTeacherModal').classList.remove('hidden');
+      });
+      document.getElementById('addStudentBtn').addEventListener('click', function() {
+        document.getElementById('addStudentModal').classList.remove('hidden');
+      });
+
+      // Modal controls
+      document.getElementById('closeAddTeacherModal').addEventListener('click', () => {
+        document.getElementById('addTeacherModal').classList.add('hidden');
+      });
+      document.getElementById('closeAddStudentModal').addEventListener('click', () => {
+        document.getElementById('addStudentModal').classList.add('hidden');
+      });
+      document.getElementById('cancelAddTeacher').addEventListener('click', () => {
+        document.getElementById('addTeacherModal').classList.add('hidden');
+      });
+      document.getElementById('cancelAddStudent').addEventListener('click', () => {
+        document.getElementById('addStudentModal').classList.add('hidden');
+      });
+
+      // Confirm actions
+      document.getElementById('confirmAddTeacher').addEventListener('click', addTeacher);
+      document.getElementById('confirmAddStudent').addEventListener('click', addStudent);
+
+      // Export buttons
+      document.getElementById('exportStudentsBtn').addEventListener('click', () => exportReport('students'));
+      document.getElementById('exportTeachersBtn').addEventListener('click', () => exportReport('teachers'));
+      document.getElementById('exportLogsBtn').addEventListener('click', () => exportReport('logs'));
+      document.getElementById('exportAllData').addEventListener('click', () => exportReport('all'));
+
+      // Search functionality
+      document.getElementById('teacherSearch').addEventListener('input', filterTeachers);
+      document.getElementById('studentSearch').addEventListener('input', filterStudents);
+
+      // Save settings
+      document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+    }
+
+    function loadDashboardData() {
+      showLoadingState();
+      
+      // Load performance data
+      fetch('/api/performance-data')
+        .then(response => response.json())
+        .then(data => {
+          updateDashboardCharts(data);
+          updateDashboardStats(data);
+          loadRecommendations();
+        })
+        .catch(error => {
+          console.error('Error loading performance data:', error);
+          showErrorState();
+        });
+
+      loadUsersData();
+    }
+
+    function loadPanelData(panel) {
+      switch(panel) {
+        case 'students':
+          loadStudentsData();
+          break;
+        case 'teachers':
+          loadTeachersData();
+          break;
+        case 'logs':
+          loadLogsData();
+          break;
+      }
+    }
+
+    function loadUsersData() {
+      fetch('/admin/users')
+        .then(response => response.json())
+        .then(users => {
+          currentUsers = users;
+          updateDashboardStatsFromUsers(users);
+        })
+        .catch(error => {
+          console.error('Error loading users data:', error);
+        });
+    }
+
+    function loadStudentsData() {
+      fetch('/admin/students')
+        .then(response => response.json())
+        .then(students => {
+          currentStudents = students;
+          updateStudentsTable(students);
+        })
+        .catch(error => {
+          console.error('Error loading students data:', error);
+        });
+    }
+
+    function loadTeachersData() {
+      fetch('/admin/teachers')
+        .then(response => response.json())
+        .then(teachers => {
+          currentTeachers = teachers;
+          updateTeachersTable(teachers);
+        })
+        .catch(error => {
+          console.error('Error loading teachers data:', error);
+        });
+    }
+
+    function loadLogsData() {
+      fetch('/api/system-logs')
+        .then(response => response.json())
+        .then(logs => {
+          currentLogs = logs;
+          updateLogsTable(logs);
+        })
+        .catch(error => {
+          console.error('Error loading logs data:', error);
+        });
+    }
+
+    function loadRecommendations() {
+      fetch('/api/system-recommendations')
+        .then(response => response.json())
+        .then(recommendations => {
+          updateRecommendations(recommendations);
+        })
+        .catch(error => {
+          console.error('Error loading recommendations:', error);
+          updateRecommendations(getSampleRecommendations());
+        });
+    }
+
+    function updateDashboardCharts(data) {
+      // Performance Trend Chart
+      const ctxPerf = document.getElementById('performanceChart');
+      if (adminCharts.performance) adminCharts.performance.destroy();
+      
+      adminCharts.performance = new Chart(ctxPerf, {
+        type: 'line',
+        data: {
+          labels: data.dates || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Overall Performance',
+            data: data.scores || [68, 70, 72, 71, 73, 75],
+            tension: 0.4,
+            borderWidth: 2,
+            fill: true,
+            backgroundColor: 'rgba(96,165,250,0.08)',
+            borderColor: 'rgba(96,165,250,0.9)',
+            pointBackgroundColor: 'rgba(96,165,250,1)',
+            pointBorderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {legend: {display: false}},
+          scales: {
+            x: {grid: {display: false}, ticks: {color: '#9aa4b2'}}, 
+            y: {display: false}
+          }
+        }
+      });
+
+      // Subject Chart
+      const ctxSubject = document.getElementById('subjectChart');
+      if (adminCharts.subject) adminCharts.subject.destroy();
+      
+      const subjectData = data.subject_averages || { Mathematics: 78, English: 75, Science: 72, History: 80 };
+      const subjectLabels = Object.keys(subjectData);
+      const subjectValues = Object.values(subjectData);
+      
+      adminCharts.subject = new Chart(ctxSubject, {
+        type: 'bar',
+        data: {
+          labels: subjectLabels,
+          datasets: [{
+            label: 'Average Score',
+            data: subjectValues,
+            backgroundColor: 'rgba(96,165,250,0.95)',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {legend: {display: false}},
+          scales: {
+            x: {grid: {display: false}, ticks: {color: '#9aa4b2'}}, 
+            y: {ticks: {color: '#9aa4b2'}}
+          }
+        }
+      });
+
+      // Day Chart
+      const ctxDay = document.getElementById('dayChart');
+      if (adminCharts.day) adminCharts.day.destroy();
+      
+      const dayData = data.day_averages || { Monday: 75, Tuesday: 82, Wednesday: 78, Thursday: 80, Friday: 76 };
+      const dayLabels = Object.keys(dayData);
+      const dayValues = Object.values(dayData);
+      
+      adminCharts.day = new Chart(ctxDay, {
+        type: 'bar',
+        data: {
+          labels: dayLabels,
+          datasets: [{
+            label: 'Average Score',
+            data: dayValues,
+            backgroundColor: 'rgba(249,115,22,0.8)',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {legend: {display: false}},
+          scales: {
+            x: {grid: {display: false}, ticks: {color: '#9aa4b2'}}, 
+            y: {ticks: {color: '#9aa4b2'}}
+          }
+        }
+      });
+
+      // Teacher Chart
+      const ctxTeacher = document.getElementById('teacherChart');
+      if (adminCharts.teacher) adminCharts.teacher.destroy();
+      
+      const teacherData = data.teacher_averages || { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78, 'Atieno': 76 };
+      const teacherLabels = Object.keys(teacherData);
+      const teacherValues = Object.values(teacherData);
+      
+      adminCharts.teacher = new Chart(ctxTeacher, {
+        type: 'doughnut',
+        data: {
+          labels: teacherLabels,
+          datasets: [{
+            data: teacherValues,
+            backgroundColor: [
+              'rgba(96,165,250,0.8)',
+              'rgba(45,212,191,0.8)',
+              'rgba(249,115,22,0.8)',
+              'rgba(139,92,246,0.8)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {legend: {position: 'bottom'}}
+        }
+      });
+
+      // Topic Chart
+      const ctxTopic = document.getElementById('topicChart');
+      if (adminCharts.topic) adminCharts.topic.destroy();
+      
+      const topicData = data.topic_averages || { Algebra: 72, Geometry: 78, Trigonometry: 75, Statistics: 82 };
+      const topicLabels = Object.keys(topicData);
+      const topicValues = Object.values(topicData);
+      
+      adminCharts.topic = new Chart(ctxTopic, {
+        type: 'bar',
+        data: {
+          labels: topicLabels,
+          datasets: [{
+            label: 'Average Score',
+            data: topicValues,
+            backgroundColor: 'rgba(139,92,246,0.8)',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {legend: {display: false}},
+          indexAxis: 'y',
+          scales: {
+            x: {grid: {display: false}, ticks: {color: '#9aa4b2'}}, 
+            y: {ticks: {color: '#9aa4b2'}}
+          }
+        }
+      });
+
+      // Update summaries
+      updateChartSummaries(data);
+    }
+
+    function updateChartSummaries(data) {
+      const subjectData = data.subject_averages || {};
+      const dayData = data.day_averages || {};
+      const teacherData = data.teacher_averages || {};
+      const topicData = data.topic_averages || {};
+
+      // Subject summary
+      if (Object.keys(subjectData).length > 0) {
+        const bestSubject = Object.entries(subjectData).reduce((a, b) => a[1] > b[1] ? a : b);
+        document.getElementById('subjectSummary').innerHTML = 
+          `<strong>Best subject:</strong> ${bestSubject[0]} (${bestSubject[1]}%)`;
+      }
+
+      // Day summary
+      if (Object.keys(dayData).length > 0) {
+        const bestDay = Object.entries(dayData).reduce((a, b) => a[1] > b[1] ? a : b);
+        document.getElementById('daySummary').innerHTML = 
+          `<strong>Best day:</strong> ${bestDay[0]} (${bestDay[1]}%)`;
+      }
+
+      // Teacher summary
+      if (Object.keys(teacherData).length > 0) {
+        const bestTeacher = Object.entries(teacherData).reduce((a, b) => a[1] > b[1] ? a : b);
+        document.getElementById('teacherSummary').innerHTML = 
+          `<strong>Top teacher:</strong> ${bestTeacher[0]} (${bestTeacher[1]}%)`;
+      }
+
+      // Topic summary
+      if (Object.keys(topicData).length > 0) {
+        const bestTopic = Object.entries(topicData).reduce((a, b) => a[1] > b[1] ? a : b);
+        const worstTopic = Object.entries(topicData).reduce((a, b) => a[1] < b[1] ? a : b);
+        document.getElementById('topicSummary').innerHTML = 
+          `<strong>Best topic:</strong> ${bestTopic[0]}<br>
+           <strong>Needs attention:</strong> ${worstTopic[0]}`;
+      }
+    }
+
+    function updateDashboardStats(data) {
+      const totalStudents = currentUsers.filter(user => user.role === 'student').length;
+      const totalTeachers = currentUsers.filter(user => user.role === 'teacher').length;
+      const avgPerformance = data.overall_average || (data.scores && data.scores.length > 0 ? 
+        (data.scores.reduce((a, b) => a + b, 0) / data.scores.length).toFixed(1) : 0);
+
+      document.getElementById('totalStudents').textContent = totalStudents;
+      document.getElementById('totalTeachers').textContent = totalTeachers;
+      document.getElementById('avgPerformance').textContent = `${avgPerformance}%`;
+      document.getElementById('totalTests').textContent = data.total_grades || '0';
+      document.getElementById('alertCount').textContent = currentUsers.filter(u => !u.is_active).length;
+    }
+
+    function updateDashboardStatsFromUsers(users) {
+      const totalStudents = users.filter(user => user.role === 'student').length;
+      const totalTeachers = users.filter(user => user.role === 'teacher').length;
+      
+      document.getElementById('totalStudents').textContent = totalStudents;
+      document.getElementById('totalTeachers').textContent = totalTeachers;
+      document.getElementById('alertCount').textContent = users.filter(u => !u.is_active).length;
+    }
+
+    function updateStudentsTable(students) {
+      const tbody = document.getElementById('studentsTable');
+      tbody.innerHTML = '';
+      
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted)">No students found</td></tr>';
+        return;
+      }
+      
+      students.forEach(student => {
+        const row = document.createElement('tr');
+        const statusColor = student.status === 'active' ? 'var(--accent)' : 'var(--muted)';
+        
+        row.innerHTML = `
+          <td>${student.student_id || 'N/A'}</td>
+          <td>${student.full_name || 'N/A'}</td>
+          <td>${student.username || 'N/A'}</td>
+          <td>${student.grade_level || 'N/A'}</td>
+          <td>${student.average_grade || '0'}%</td>
+          <td>${student.test_count || 0}</td>
+          <td><span style="color:${statusColor}">${student.status || 'active'}</span></td>
+          <td>
+            <button class="action-btn edit" data-id="${student.id}">Edit</button>
+            <button class="action-btn delete" data-id="${student.id}">Remove</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Add event listeners for action buttons
+      tbody.querySelectorAll('.action-btn.delete').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const studentId = this.getAttribute('data-id');
+          deleteStudent(studentId);
+        });
+      });
+    }
+
+    function updateTeachersTable(teachers) {
+      const tbody = document.getElementById('teachersTable');
+      tbody.innerHTML = '';
+      
+      if (teachers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted)">No teachers found</td></tr>';
+        return;
+      }
+      
+      teachers.forEach(teacher => {
+        const row = document.createElement('tr');
+        const statusColor = teacher.status === 'active' ? 'var(--accent)' : 'var(--muted)';
+        
+        row.innerHTML = `
+          <td>${teacher.full_name || 'N/A'}</td>
+          <td>${teacher.username || 'N/A'}</td>
+          <td>${teacher.subjects || 'N/A'}</td>
+          <td>${teacher.student_count || 0}</td>
+          <td style="color:${teacher.impact > 0 ? 'var(--accent)' : 'var(--danger)'}">
+            ${teacher.impact > 0 ? '+' : ''}${teacher.impact || 0}%
+          </td>
+          <td><span style="color:${statusColor}">${teacher.status || 'active'}</span></td>
+          <td>
+            <button class="action-btn edit" data-id="${teacher.id}">Edit</button>
+            <button class="action-btn delete" data-id="${teacher.id}">Remove</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Add event listeners for action buttons
+      tbody.querySelectorAll('.action-btn.delete').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const teacherId = this.getAttribute('data-id');
+          deleteTeacher(teacherId);
+        });
+      });
+    }
+
+    function updateLogsTable(logs) {
+      const tbody = document.getElementById('logsTable');
+      tbody.innerHTML = '';
+      
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No logs found</td></tr>';
+        return;
+      }
+      
+      logs.slice(0, 50).forEach(log => {
+        const row = document.createElement('tr');
+        const statusColor = log.status === 'success' ? 'var(--accent)' : 
+                           log.status === 'error' ? 'var(--danger)' : 'var(--muted)';
+        
+        row.innerHTML = `
+          <td>${new Date(log.timestamp).toLocaleString()}</td>
+          <td>${log.user || 'System'}</td>
+          <td>${log.action || 'N/A'}</td>
+          <td><span style="color:${statusColor}">${log.status || 'info'}</span></td>
+          <td>${log.details || 'No details'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateRecommendations(recommendations) {
+      const container = document.getElementById('recommendations-container');
+      container.innerHTML = '';
+
+      if (recommendations.length === 0) {
+        recommendations = getSampleRecommendations();
+      }
+
+      recommendations.forEach(rec => {
+        const card = document.createElement('div');
+        card.className = 'recommendation-card';
+        card.innerHTML = `
+          <h4>${rec.type ? rec.type.replace('_', ' ').toUpperCase() : 'RECOMMENDATION'}</h4>
+          <p>${rec.text}</p>
+          ${rec.impact_score ? `<div style="margin-top: 8px; font-size: 12px; color: var(--accent3);">Potential improvement: +${rec.impact_score}%</div>` : ''}
+          ${rec.action ? `<div style="margin-top: 4px; font-size: 11px; color: var(--muted);">Action: ${rec.action}</div>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function addTeacher() {
+      const fullName = document.getElementById('teacherFullName').value;
+      const username = document.getElementById('teacherUsername').value;
+      const email = document.getElementById('teacherEmail').value;
+      const subjects = document.getElementById('teacherSubjects').value;
+      const password = document.getElementById('teacherPassword').value;
+      
+      if (fullName && username && email && subjects && password) {
+        const teacherData = {
+          full_name: fullName,
+          username: username,
+          email: email,
+          subjects: subjects,
+          password: password,
+          role: 'teacher'
+        };
+        
+        fetch('/admin/add_user', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(teacherData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Teacher added successfully!');
+            document.getElementById('addTeacherModal').classList.add('hidden');
+            document.getElementById('addTeacherModal').querySelectorAll('input').forEach(field => field.value = '');
+            loadTeachersData();
+            loadUsersData();
+          } else {
+            alert('Error adding teacher: ' + (data.error || 'Unknown error'));
+          }
+        })
+        .catch(error => {
+          console.error('Error adding teacher:', error);
+          alert('Error adding teacher. Please try again.');
+        });
+      } else {
+        alert('Please fill all required fields');
+      }
+    }
+
+    function addStudent() {
+      const fullName = document.getElementById('studentFullName').value;
+      const username = document.getElementById('studentUsername').value;
+      const email = document.getElementById('studentEmail').value;
+      const studentId = document.getElementById('studentId').value;
+      const gradeLevel = document.getElementById('studentGradeLevel').value;
+      const password = document.getElementById('studentPassword').value;
+      
+      if (fullName && username && email && studentId && gradeLevel && password) {
+        const studentData = {
+          full_name: fullName,
+          username: username,
+          email: email,
+          student_id: studentId,
+          grade_level: gradeLevel,
+          password: password,
+          role: 'student'
+        };
+        
+        fetch('/admin/add_user', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(studentData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Student added successfully!');
+            document.getElementById('addStudentModal').classList.add('hidden');
+            document.getElementById('addStudentModal').querySelectorAll('input').forEach(field => field.value = '');
+            loadStudentsData();
+            loadUsersData();
+          } else {
+            alert('Error adding student: ' + (data.error || 'Unknown error'));
+          }
+        })
+        .catch(error => {
+          console.error('Error adding student:', error);
+          alert('Error adding student. Please try again.');
+        });
+      } else {
+        alert('Please fill all required fields');
+      }
+    }
+
+    function deleteTeacher(teacherId) {
+      if (confirm('Are you sure you want to remove this teacher?')) {
+        fetch(`/admin/delete_user/${teacherId}`, {method: 'DELETE'})
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('Teacher removed successfully!');
+              loadTeachersData();
+              loadUsersData();
+            } else {
+              alert('Error removing teacher: ' + (data.error || 'Unknown error'));
+            }
+          })
+          .catch(error => {
+            console.error('Error removing teacher:', error);
+            alert('Error removing teacher. Please try again.');
+          });
+      }
+    }
+
+    function deleteStudent(studentId) {
+      if (confirm('Are you sure you want to remove this student?')) {
+        fetch(`/admin/delete_user/${studentId}`, {method: 'DELETE'})
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('Student removed successfully!');
+              loadStudentsData();
+              loadUsersData();
+            } else {
+              alert('Error removing student: ' + (data.error || 'Unknown error'));
+            }
+          })
+          .catch(error => {
+            console.error('Error removing student:', error);
+            alert('Error removing student. Please try again.');
+          });
+      }
+    }
+
+    function filterTeachers() {
+      const searchTerm = document.getElementById('teacherSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#teachersTable tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    }
+
+    function filterStudents() {
+      const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#studentsTable tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    }
+
+    function exportReport(type) {
+      const url = `/api/export-report?type=${type}`;
+      window.location.href = url;
+    }
+
+    function saveSettings() {
+      alert('Settings saved successfully!');
+    }
+
+    function showLoadingState() {
+      document.querySelectorAll('.card .value').forEach(value => {
+        value.textContent = '...';
+      });
+    }
+
+    function showErrorState() {
+      document.querySelectorAll('.card .value').forEach(value => {
+        value.textContent = 'Error';
+        value.style.color = 'var(--danger)';
+      });
+    }
+
+    function hideFlashMessages() {
+      document.querySelectorAll('.flash-message').forEach(msg => {
+        msg.style.display = 'none';
+      });
+    }
+
+    function getSampleRecommendations() {
+      return [
+        {
+          'type': 'teacher_allocation',
+          'text': 'Consider assigning more students to Mr. Kamau as his students show 12% better performance.',
+          'impact_score': 12,
+          'action': 'Review teacher assignments'
+        },
+        {
+          'type': 'schedule_optimization', 
+          'text': 'Students perform best on Tuesdays. Consider scheduling important assessments on this day.',
+          'impact_score': 8,
+          'action': 'Optimize assessment schedule'
+        },
+        {
+          'type': 'topic_focus',
+          'text': 'Algebra shows the lowest performance. Consider additional teaching resources for this topic.',
+          'impact_score': 15,
+          'action': 'Allocate resources to Algebra'
+        }
+      ];
+    }
+  </script>
+</body>
+</html>

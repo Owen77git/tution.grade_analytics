@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard — Tuition Centre</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --panel: #0f1724;
+      --muted: #9aa4b2;
+      --card: #0d1720;
+      --accent: #6ee7b7;
+      --accent-2: #60a5fa;
+      --danger: #fb7185;
+      --warning: #fbbf24;
+      --glass: rgba(255,255,255,0.03);
+      --soft: rgba(255,255,255,0.04);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: #e6eef8;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, #0a1422, #0c1929);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 6px 0 20px rgba(2,6,23,0.6);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #021;
+    }
+    .brand h1 {
+      font-size: 16px;
+      margin: 0;
+    }
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .menu button {
+      background: transparent;
+      border: 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .menu button:hover {
+      background: rgba(255,255,255,0.02);
+    }
+    .menu button.active {
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+      color: #fff;
+      border-left: 3px solid var(--accent);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--glass);
+      padding: 10px 12px;
+      border-radius: 10px;
+      width: 400px;
+    }
+    .search input {
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: #cfe6ff;
+      font-size: 14px;
+      width: 100%;
+    }
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #0b1622;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      gap: 20px;
+    }
+    .col-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .right {
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .panel h3 {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+    }
+
+    /* KPIs */
+    .kpis {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .kpi {
+      flex: 1;
+      padding: 16px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+    }
+    .kpi small {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .kpi strong {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #021;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.04);
+      color: var(--muted);
+    }
+    .btn.danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Widgets */
+    .widgets {
+      display: flex;
+      gap: 16px;
+    }
+    .donut {
+      flex: 1;
+    }
+    .mini-bar {
+      flex: 1;
+    }
+
+    /* List items */
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .list-item:last-child {
+      border-bottom: none;
+    }
+    .badge {
+      background: var(--accent);
+      color: #021;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Small cards */
+    .small-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .small-card h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Hidden utility */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Flash messages */
+    .flash-messages {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 400px;
+    }
+    .flash-message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .flash-message.success {
+      background: var(--accent);
+      color: #021;
+    }
+    .flash-message.error {
+      background: var(--danger);
+      color: white;
+    }
+    .flash-message.info {
+      background: var(--accent-2);
+      color: white;
+    }
+
+    /* Teacher actions */
+    .teacher-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Chart containers */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-bottom: 20px;
+    }
+    .chart-container.small {
+      height: 150px;
+    }
+
+    /* New styles for insights and reports */
+    .insights-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border-left: 4px solid var(--accent);
+    }
+    .insight-item {
+      padding: 16px;
+      margin: 12px 0;
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-2);
+    }
+    /* White text for add grade section labels */
+#addGradeModal .form-group label {
+    color: #fff !important;
+}
+
+/* White text for student and subject sections */
+#addGradeModal .student-section,
+#addGradeModal .subject-section {
+    color: #fff;
+}
+
+/* White text for student and subject options */
+#addGradeModal .student-option,
+#addGradeModal .subject-option {
+    color: #fff;
+}
+
+/* White text for preview content */
+#addGradeModal .grade-preview,
+#addGradeModal #previewContent {
+    color: #fff;
+}
+
+/* White text for section headers in modal */
+#addGradeModal .modal-header h2 {
+    color: #fff;
+}
+
+/* Keep form inputs with black text for readability */
+#addGradeModal .form-control {
+    color: #000;
+}
+    .insight-item.warning {
+      border-left-color: var(--warning);
+    }
+    .insight-item.danger {
+      border-left-color: var(--danger);
+    }
+    .export-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .export-btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .export-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--accent);
+    }
+    .chart-report {
+      background: rgba(255,255,255,0.02);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: #000; /* Changed to black for better visibility */
+      font-size: 14px;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(2,6,23,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal {
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(2,6,23,0.8);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-size: 18px;
+      color: var(--accent);
+      margin: 0;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 20px;
+    }
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Table styles */
+    .table-container {
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .data-table td {
+      padding: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+    }
+    .action-btn {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      margin-right: 4px;
+    }
+    .action-btn.delete {
+      background: rgba(251,113,133,0.1);
+      color: var(--danger);
+    }
+
+    /* Grade preview */
+    .grade-preview {
+      background: rgba(255,255,255,0.02);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      border-left: 3px solid var(--accent);
+    }
+    .grade-preview h4 {
+      margin: 0 0 8px 0;
+      color: var(--accent);
+    }
+    
+    /* Student selection section */
+    .student-section {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .student-option {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .student-option:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .student-option.selected {
+      background: rgba(110,231,183,0.2);
+      border-left: 3px solid var(--accent);
+    }
+    
+    /* Subject selection section */
+    .subject-section {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .subject-option {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .subject-option:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .subject-option.selected {
+      background: rgba(96,165,250,0.2);
+      border-left: 3px solid var(--accent-2);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" role="navigation" aria-label="Main nav">
+      <div class="brand">
+        <div class="logo">TC</div>
+        <div>
+          <h1>Tuition Centre</h1>
+          <div style="font-size:12px;color:var(--muted)">Teacher Portal</div>
+        </div>
+      </div>
+
+      <nav class="menu" id="menu">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="input">Input Grades</button>
+        <button data-panel="graph-data">Graph Data</button>
+        <button data-panel="settings">Settings</button>
+        <button onclick="window.location.href='{{ url_for('logout') }}'" style="color: var(--danger);">Logout</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px">Logged as</div>
+            <div style="font-weight:600">{{ teacher.full_name.split(' ')[0] }}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--muted)">Today</div>
+            <div style="font-weight:600" id="currentDate">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Flash Messages -->
+      <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <header class="topbar">
+        <div class="search">
+          <input id="global-search" placeholder="Search students, topics, tests..." />
+        </div>
+        <div class="user">
+          <div style="text-align:right;margin-right:6px">
+            <div style="font-size:13px;color:var(--muted)">{{ teacher.full_name.split(' ')[0] }}</div>
+            <div style="font-size:12px;color:var(--muted)">{{ teacher.subjects.split(',')[0] }} Teacher</div>
+          </div>
+          <div class="avatar">{{ teacher.full_name[0] }}</div>
+        </div>
+      </header>
+
+      <!-- Overview Panel -->
+      <div class="content panel-content" id="overview-panel">
+        <div class="col-left">
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <div>
+                <h3>Class Performance Overview</h3>
+                <div style="font-size:13px;color:var(--muted)">{{ teacher.subjects }} • Last 90 days</div>
+              </div>
+              <div class="teacher-actions">
+                <button class="btn" id="refreshBtn">Refresh Data</button>
+                <button class="btn ghost" id="downloadReport">Export Report</button>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:16px;margin-bottom:20px" class="kpis">
+              <div class="kpi">
+                <small>Students in System</small>
+                <strong id="kpi-students">Loading...</strong>
+              </div>
+              <div class="kpi">
+                <small>Subjects</small>
+                <strong id="kpi-subjects">Loading...</strong>
+              </div>
+              <div class="kpi">
+                <small>Average Score</small>
+                <strong id="kpi-avg">Loading...</strong>
+              </div>
+              <div class="kpi">
+                <small>Total Tests</small>
+                <strong id="kpi-tests">Loading...</strong>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="areaChart"></canvas>
+            </div>
+
+            <!-- Performance Insights -->
+            <div class="insights-panel">
+              <h4>Performance Insights</h4>
+              <div id="performanceInsights">
+                <div style="text-align:center;color:var(--muted)">Analyzing performance data...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- small widgets row -->
+          <div style="display:flex;gap:20px">
+            <div class="panel" style="flex:1">
+              <h3>Performance by Factor</h3>
+              <div class="widgets" style="margin-top:16px">
+                <div class="panel donut" style="padding:16px">
+                  <h4 style="margin:8px 0 12px 0;color:var(--muted);font-size:13px">By Day of Week</h4>
+                  <div class="chart-container small">
+                    <canvas id="dayChart"></canvas>
+                  </div>
+                  <div class="chart-report" id="dayReport">
+                    Analyzing day performance patterns...
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                  <div class="panel mini-bar">
+                    <h4 style="margin:0;color:var(--muted);font-size:13px">By Teacher</h4>
+                    <div class="chart-container small">
+                      <canvas id="teacherChart"></canvas>
+                    </div>
+                  </div>
+                  <div class="panel mini-bar">
+                    <h4 style="margin:0;color:var(--muted);font-size:13px">By Topic</h4>
+                    <div class="chart-container small">
+                      <canvas id="topicChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel" style="width:360px">
+              <h3>Quick Stats & Actions</h3>
+              <div style="margin-top:16px">
+                <div class="list-item">
+                  <div>
+                    <div style="font-weight:700">Total Tests</div>
+                    <div style="font-size:13px;color:var(--muted)">All time</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-weight:700;color:var(--accent)" id="totalTests">Loading...</div>
+                  </div>
+                </div>
+
+                <div class="list-item">
+                  <div>
+                    <div style="font-weight:700">Best Performing Day</div>
+                    <div style="font-size:13px;color:var(--muted)">Highest average scores</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="badge" id="bestDay">Loading...</div>
+                  </div>
+                </div>
+
+                <div class="list-item" style="border-bottom:none">
+                  <div>
+                    <div style="font-weight:700">Most Challenging Topic</div>
+                    <div style="font-size:13px;color:var(--muted)">Needs attention</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:13px;color:var(--danger)" id="challengingTopic">Loading...</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:20px">
+                  <button class="btn" id="openUpload">Upload CSV Results</button>
+                </div>
+
+                <!-- Export Options -->
+                <div style="margin-top:20px">
+                  <h4 style="margin-bottom:12px;color:var(--muted);font-size:13px">Export Reports</h4>
+                  <div class="export-options">
+                    <button class="export-btn" data-report="performance_summary">Performance Summary</button>
+                    <button class="export-btn" data-report="student_progress">Student Progress</button>
+                    <button class="export-btn" data-report="comprehensive">Full Data Export</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- right column -->
+        <aside class="right">
+          <div class="small-card panel">
+            <h4>Top Students</h4>
+            <div style="margin-top:12px" id="topStudentsList">
+              <div style="text-align:center;color:var(--muted)">Loading...</div>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Recent Tests</h4>
+            <div style="margin-top:12px" id="recent-tests">
+              <div style="text-align:center;color:var(--muted)">Loading...</div>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Performance Factors</h4>
+            <div style="margin-top:12px" id="performanceFactors">
+              <div style="text-align:center;color:var(--muted)">Loading...</div>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Teaching Recommendations</h4>
+            <div style="margin-top:12px" id="systemRecommendations">
+              <div style="text-align:center;color:var(--muted)">Loading...</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Input Grades Panel -->
+      <div class="content panel-content hidden" id="input-panel">
+        <div class="col-left">
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <h3>Student Grade Management</h3>
+              <button class="btn" id="addGradeBtn">Add New Grade</button>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Subject</th>
+                    <th>Topic</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="gradesTable">
+                  <tr>
+                    <td colspan="7" style="text-align:center;color:var(--muted);padding:20px">
+                      Loading student grades...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="small-card panel">
+            <h4>Quick Actions</h4>
+            <div style="margin-top:12px">
+              <button class="btn ghost" style="width:100%;margin-bottom:8px" id="bulkUploadBtn">
+                Bulk Upload CSV
+              </button>
+              <button class="btn ghost" style="width:100%" id="exportGradesBtn">
+                Export Gradebook
+              </button>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Grade Distribution</h4>
+            <div class="chart-container small">
+              <canvas id="gradeDistributionChart"></canvas>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Recent Activity</h4>
+            <div style="margin-top:12px" id="gradeActivity">
+              <div style="text-align:center;color:var(--muted)">No recent activity</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Graph Data Panel -->
+      <div class="content panel-content hidden" id="graph-data-panel">
+        <div class="col-left">
+          <div class="panel">
+            <h3>Performance Analytics</h3>
+            <div class="tabs">
+              <div class="tab active" data-tab="overview-graphs">Overview</div>
+              <div class="tab" data-tab="factor-graphs">Factor Analysis</div>
+              <div class="tab" data-tab="student-graphs">Student Comparison</div>
+            </div>
+
+            <div class="tab-content active" id="overview-graphs">
+              <div class="chart-container">
+                <h4>Performance Trend Over Time</h4>
+                <canvas id="trendChart"></canvas>
+                <div class="chart-report" id="trendReport">
+                  Analyzing performance trends...
+                </div>
+              </div>
+              
+              <div class="widgets" style="margin-top:20px">
+                <div class="panel">
+                  <h4>Subject Performance</h4>
+                  <div class="chart-container" style="height:250px">
+                    <canvas id="subjectBarChart"></canvas>
+                  </div>
+                  <div class="chart-report" id="subjectReport">
+                    Subject performance analysis...
+                  </div>
+                </div>
+                <div class="panel">
+                  <h4>Topic Performance</h4>
+                  <div class="chart-container" style="height:250px">
+                    <canvas id="topicBarChart"></canvas>
+                  </div>
+                  <div class="chart-report" id="topicReport">
+                    Topic performance analysis...
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" id="factor-graphs">
+              <div class="widgets">
+                <div class="panel">
+                  <h4>Day of Week Impact</h4>
+                  <div class="chart-container" style="height:300px">
+                    <canvas id="dayImpactChart"></canvas>
+                  </div>
+                  <div class="chart-report" id="dayImpactReport">
+                    Day impact analysis...
+                  </div>
+                </div>
+                <div class="panel">
+                  <h4>Teacher Performance Comparison</h4>
+                  <div class="chart-container" style="height:300px">
+                    <canvas id="teacherImpactChart"></canvas>
+                  </div>
+                  <div class="chart-report" id="teacherImpactReport">
+                    Teacher comparison analysis...
+                  </div>
+                </div>
+              </div>
+              
+              <div class="panel" style="margin-top:20px">
+                <h4>Topic Difficulty Analysis</h4>
+                <div class="chart-container" style="height:350px">
+                  <canvas id="topicDifficultyChart"></canvas>
+                </div>
+                <div class="chart-report" id="topicDifficultyReport">
+                  Topic difficulty analysis...
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" id="student-graphs">
+              <div class="panel">
+                <h4>Student Performance Comparison</h4>
+                <div class="chart-container" style="height:450px">
+                  <canvas id="studentComparisonChart"></canvas>
+                </div>
+                <div class="chart-report" id="studentComparisonReport">
+                  Student comparison analysis...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="small-card panel">
+            <h4>Chart Controls</h4>
+            <div style="margin-top:12px">
+              <div class="form-group">
+                <label>Time Range</label>
+                <select class="form-control" id="timeRange">
+                  <option value="30">Last 30 days</option>
+                  <option value="90" selected>Last 90 days</option>
+                  <option value="180">Last 6 months</option>
+                  <option value="365">Last year</option>
+                  <option value="0">All time</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Subject Filter</label>
+                <select class="form-control" id="subjectFilter">
+                  <option value="all">All Subjects</option>
+                </select>
+              </div>
+              <button class="btn" style="width:100%" id="applyFilters">Apply Filters</button>
+              <button class="btn ghost" style="width:100%;margin-top:12px" id="exportChartData">Export Chart Data</button>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Key Insights</h4>
+            <div style="margin-top:12px" id="chartInsights">
+              <div style="text-align:center;color:var(--muted)">Loading insights...</div>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Data Summary</h4>
+            <div style="margin-top:12px" id="dataSummary">
+              <div style="text-align:center;color:var(--muted)">Loading summary...</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="content panel-content hidden" id="settings-panel">
+        <div class="panel">
+          <h3>Settings</h3>
+          <div style="margin-top:20px">
+            <p>Settings panel content goes here...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Grade Modal -->
+  <div class="modal-overlay hidden" id="addGradeModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add Student Grade</h2>
+        <button class="modal-close" id="closeAddGradeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addGradeForm">
+          <div class="form-group">
+            <label for="studentSelect" style="color: #000;">Choose Student</label>
+            <div class="student-section" id="studentSection">
+              <div style="text-align:center;color:var(--muted)">Loading students...</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="newSubject" style="color: #000;">Add New Subject</label>
+            <input type="text" class="form-control" id="newSubject" placeholder="Enter new subject name">
+          </div>
+          
+          <div class="form-group">
+            <label for="subjectSelect" style="color: #000;">Or Select Existing Subject</label>
+            <div class="subject-section" id="subjectSection">
+              <div style="text-align:center;color:var(--muted)">Loading subjects...</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="topicInput" style="color: #000;">Topic</label>
+            <input type="text" class="form-control" id="topicInput" placeholder="e.g., Algebra, Grammar, Mechanics..." required>
+          </div>
+          
+          <div class="form-group">
+            <label for="scoreInput" style="color: #000;">Score (0-100)</label>
+            <input type="number" class="form-control" id="scoreInput" min="0" max="100" step="0.1" placeholder="Enter score" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="examDate" style="color: #000;">Exam Date</label>
+            <input type="date" class="form-control" id="examDate" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="dayOfWeek" style="color: #000;">Day of Week</label>
+            <select class="form-control" id="dayOfWeek">
+              <option value="">Select day...</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+          </div>
+
+          <!-- Grade Preview -->
+          <div class="grade-preview hidden" id="gradePreview">
+            <h4>Grade Preview</h4>
+            <div id="previewContent">
+              <!-- Preview content will be populated by JavaScript -->
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn ghost" id="previewGradeBtn">Preview Grade</button>
+        <button class="btn" id="confirmAddGrade">Add Grade</button>
+      </div>
+    </div>
+  </div>
+
+ <script src="{{ url_for('static', filename='js/Filcharts.js') }}"></script>
+<script>
+    let currentPerformanceData = null;
+    let teacherCharts = {};
+    let currentStudents = [];
+    let currentSubjects = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Teacher dashboard loading...');
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+        document.getElementById('examDate').valueAsDate = new Date();
+        
+        loadOverviewData();
+        setupNavigation();
+        setupEventListeners();
+        loadStudentsData();
+        loadGradesData();
+        loadSubjectsData();
+        
+        // Auto-hide flash messages
+        setTimeout(hideFlashMessages, 5000);
+    });
+
+    function setupNavigation() {
+        document.querySelectorAll('.menu button').forEach(btn => {
+            if (!btn.onclick) {
+                btn.addEventListener('click', e => {
+                    document.querySelectorAll('.menu button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const panel = btn.getAttribute('data-panel');
+                    document.querySelectorAll('.panel-content').forEach(p => p.classList.add('hidden'));
+                    document.getElementById(`${panel}-panel`).classList.remove('hidden');
+                    
+                    loadPanelData(panel);
+                });
+            }
+        });
+
+        // Tab navigation
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabContainer = this.closest('.tabs');
+                const tabContentId = this.getAttribute('data-tab');
+                
+                // Update active tab
+                tabContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active content
+                const contentContainer = tabContainer.nextElementSibling || tabContainer.parentNode;
+                contentContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(tabContentId).classList.add('active');
+            });
+        });
+    }
+
+    function setupEventListeners() {
+        document.getElementById('refreshBtn')?.addEventListener('click', loadOverviewData);
+        document.getElementById('downloadReport')?.addEventListener('click', () => {
+            exportReport('comprehensive');
+        });
+        
+        // Export buttons
+        document.querySelectorAll('.export-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const reportType = this.getAttribute('data-report');
+                exportReport(reportType);
+            });
+        });
+
+        document.getElementById('applyFilters')?.addEventListener('click', function() {
+            loadOverviewData();
+        });
+
+        // Grade management buttons
+        document.getElementById('addGradeBtn')?.addEventListener('click', function() {
+            document.getElementById('addGradeModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeAddGradeModal')?.addEventListener('click', function() {
+            document.getElementById('addGradeModal').classList.add('hidden');
+            resetGradeForm();
+        });
+
+        document.getElementById('previewGradeBtn')?.addEventListener('click', function() {
+            previewGrade();
+        });
+
+        document.getElementById('confirmAddGrade')?.addEventListener('click', function() {
+            addGrade();
+        });
+
+        document.getElementById('exportGradesBtn')?.addEventListener('click', function() {
+            exportReport('performance_summary');
+        });
+    }
+
+    function loadStudentsData() {
+        fetch('/teacher/students')
+            .then(response => response.json())
+            .then(students => {
+                currentStudents = students;
+                updateStudentSection(students);
+            })
+            .catch(error => {
+                console.error('Error loading students:', error);
+                // Use sample data if API fails
+                const sampleStudents = [
+                    { id: 1, full_name: 'John Doe', student_id: 'S001' },
+                    { id: 2, full_name: 'Jane Smith', student_id: 'S002' },
+                    { id: 3, full_name: 'Michael Johnson', student_id: 'S003' },
+                    { id: 4, full_name: 'Sarah Williams', student_id: 'S004' },
+                    { id: 5, full_name: 'David Brown', student_id: 'S005' }
+                ];
+                currentStudents = sampleStudents;
+                updateStudentSection(sampleStudents);
+            });
+    }
+
+    function updateStudentSection(students) {
+        const studentSection = document.getElementById('studentSection');
+        studentSection.innerHTML = '';
+        
+        if (students.length === 0) {
+            studentSection.innerHTML = '<div style="text-align:center;color:var(--muted)">No students found</div>';
+            return;
+        }
+        
+        students.forEach(student => {
+            const studentOption = document.createElement('div');
+            studentOption.className = 'student-option';
+            studentOption.setAttribute('data-id', student.id);
+            studentOption.innerHTML = `
+                <div style="font-weight:600">${student.full_name}</div>
+                <div style="font-size:12px;color:var(--muted)">ID: ${student.student_id}</div>
+            `;
+            
+            studentOption.addEventListener('click', function() {
+                // Remove selected class from all options
+                document.querySelectorAll('.student-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Add selected class to clicked option
+                this.classList.add('selected');
+            });
+            
+            studentSection.appendChild(studentOption);
+        });
+    }
+
+    function loadSubjectsData() {
+        fetch('/teacher/subjects')
+            .then(response => response.json())
+            .then(subjects => {
+                currentSubjects = subjects;
+                updateSubjectSection(subjects);
+            })
+            .catch(error => {
+                console.error('Error loading subjects:', error);
+                // Use sample data if API fails
+                const sampleSubjects = ['Mathematics', 'English', 'Science', 'History', 'Physics', 'Chemistry'];
+                currentSubjects = sampleSubjects;
+                updateSubjectSection(sampleSubjects);
+            });
+    }
+
+    function updateSubjectSection(subjects) {
+        const subjectSection = document.getElementById('subjectSection');
+        subjectSection.innerHTML = '';
+        
+        if (subjects.length === 0) {
+            subjectSection.innerHTML = '<div style="text-align:center;color:var(--muted)">No subjects found</div>';
+            return;
+        }
+        
+        subjects.forEach(subject => {
+            const subjectOption = document.createElement('div');
+            subjectOption.className = 'subject-option';
+            subjectOption.textContent = subject;
+            
+            subjectOption.addEventListener('click', function() {
+                // Remove selected class from all options
+                document.querySelectorAll('.subject-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                // Clear the new subject input
+                document.getElementById('newSubject').value = '';
+            });
+            
+            subjectSection.appendChild(subjectOption);
+        });
+    }
+
+    function loadGradesData() {
+        fetch('/teacher/grades')
+            .then(response => response.json())
+            .then(grades => {
+                updateGradesTable(grades);
+            })
+            .catch(error => {
+                console.error('Error loading grades:', error);
+            });
+    }
+
+    function updateGradesTable(grades) {
+        const tbody = document.getElementById('gradesTable');
+        tbody.innerHTML = '';
+        
+        if (grades.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center;color:var(--muted);padding:20px">
+                        No grades recorded yet. Click "Add New Grade" to get started.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        grades.forEach(grade => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${grade.student_name}</td>
+                <td>${grade.student_id}</td>
+                <td>${grade.subject}</td>
+                <td>${grade.topic}</td>
+                <td style="color: ${getScoreColor(grade.score)}; font-weight: 600">${grade.score}%</td>
+                <td>${grade.exam_date}</td>
+                <td>
+                    <button class="action-btn delete" data-id="${grade.id}">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Add delete event listeners
+        document.querySelectorAll('.action-btn.delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const gradeId = this.getAttribute('data-id');
+                deleteGrade(gradeId);
+            });
+        });
+    }
+
+    function getScoreColor(score) {
+        if (score >= 80) return 'var(--accent)';
+        if (score >= 70) return 'var(--accent-2)';
+        if (score >= 60) return 'var(--warning)';
+        return 'var(--danger)';
+    }
+
+    function previewGrade() {
+        const selectedStudent = document.querySelector('.student-option.selected');
+        const newSubject = document.getElementById('newSubject').value;
+        const selectedSubject = document.querySelector('.subject-option.selected');
+        const topic = document.getElementById('topicInput').value;
+        const score = document.getElementById('scoreInput').value;
+        const examDate = document.getElementById('examDate').value;
+        const dayOfWeek = document.getElementById('dayOfWeek').value;
+
+        if (!selectedStudent || (!newSubject && !selectedSubject) || !topic || !score || !examDate) {
+            alert('Please fill all required fields before previewing.');
+            return;
+        }
+
+        const studentId = selectedStudent.getAttribute('data-id');
+        const student = currentStudents.find(s => s.id == studentId);
+        const subject = newSubject || selectedSubject.textContent;
+        
+        const previewContent = document.getElementById('previewContent');
+        const gradePreview = document.getElementById('gradePreview');
+
+        previewContent.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                <div><strong>Student:</strong></div>
+                <div>${student?.full_name || 'N/A'}</div>
+                
+                <div><strong>Subject:</strong></div>
+                <div>${subject}</div>
+                
+                <div><strong>Topic:</strong></div>
+                <div>${topic}</div>
+                
+                <div><strong>Score:</strong></div>
+                <div style="color: ${getScoreColor(score)}; font-weight: 600">${score}%</div>
+                
+                <div><strong>Grade:</strong></div>
+                <div>${getGradeFromScore(score)}</div>
+                
+                <div><strong>Date:</strong></div>
+                <div>${examDate}</div>
+                
+                ${dayOfWeek ? `
+                    <div><strong>Day:</strong></div>
+                    <div>${dayOfWeek}</div>
+                ` : ''}
+            </div>
+        `;
+
+        gradePreview.classList.remove('hidden');
+    }
+
+    function addGrade() {
+        const selectedStudent = document.querySelector('.student-option.selected');
+        const newSubject = document.getElementById('newSubject').value;
+        const selectedSubject = document.querySelector('.subject-option.selected');
+        const topic = document.getElementById('topicInput').value;
+        const score = parseFloat(document.getElementById('scoreInput').value);
+        const examDate = document.getElementById('examDate').value;
+        const dayOfWeek = document.getElementById('dayOfWeek').value;
+
+        if (!selectedStudent || (!newSubject && !selectedSubject) || !topic || !score || !examDate) {
+            alert('Please fill all required fields.');
+            return;
+        }
+
+        const studentId = selectedStudent.getAttribute('data-id');
+        const subject = newSubject || selectedSubject.textContent;
+
+        const gradeData = {
+            student_id: parseInt(studentId),
+            subject: subject,
+            topic: topic,
+            score: score,
+            exam_date: examDate,
+            day_of_week: dayOfWeek || null
+        };
+
+        fetch('/teacher/add_grade', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gradeData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Grade added successfully!');
+                document.getElementById('addGradeModal').classList.add('hidden');
+                resetGradeForm();
+                loadGradesData();
+                loadOverviewData(); // Refresh charts
+                
+                // If a new subject was added, refresh the subject list
+                if (newSubject && !currentSubjects.includes(newSubject)) {
+                    loadSubjectsData();
+                }
+            } else {
+                alert('Error adding grade: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error adding grade:', error);
+            alert('Error adding grade. Please try again.');
+        });
+    }
+
+    function deleteGrade(gradeId) {
+        if (confirm('Are you sure you want to delete this grade? This action cannot be undone.')) {
+            // This would call a delete endpoint when implemented
+            alert('Delete functionality would be implemented here for grade ID: ' + gradeId);
+            // For now, just reload the data
+            loadGradesData();
+        }
+    }
+
+    function resetGradeForm() {
+        document.getElementById('addGradeForm').reset();
+        document.getElementById('examDate').valueAsDate = new Date();
+        document.getElementById('gradePreview').classList.add('hidden');
+        
+        // Clear selected options
+        document.querySelectorAll('.student-option.selected').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        document.querySelectorAll('.subject-option.selected').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+    }
+
+    function getGradeFromScore(score) {
+        if (score >= 90) return 'A';
+        if (score >= 85) return 'A-';
+        if (score >= 80) return 'B+';
+        if (score >= 75) return 'B';
+        if (score >= 70) return 'B-';
+        if (score >= 65) return 'C+';
+        if (score >= 60) return 'C';
+        if (score >= 55) return 'C-';
+        if (score >= 50) return 'D';
+        return 'F';
+    }
+
+    function loadOverviewData() {
+        console.log('Loading overview data...');
+        
+        fetch('/api/performance-data')
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Performance data loaded:', data);
+                currentPerformanceData = data;
+                initializeAllCharts(data);
+                updateKPIs(data);
+                updateSidebarData(data);
+            })
+            .catch(error => {
+                console.error('Error loading performance data:', error);
+                // Initialize with sample data if API fails
+                const sampleData = getSampleData();
+                initializeAllCharts(sampleData);
+                updateKPIs(sampleData);
+                updateSidebarData(sampleData);
+            });
+    }
+
+    function initializeAllCharts(data) {
+        console.log('Initializing charts with data:', data);
+        
+        try {
+            // Main area chart
+            createAreaChart(data);
+            
+            // Small charts
+            createDayChart(data.day_averages);
+            createTeacherChart(data.teacher_averages);
+            createTopicChart(data.topic_averages);
+            
+            // Graph Data Panel charts
+            createTrendChart(data);
+            createSubjectBarChart(data.subject_averages);
+            createTopicBarChart(data.topic_averages);
+            createDayImpactChart(data.day_averages);
+            createTeacherImpactChart(data.teacher_averages);
+            createTopicDifficultyChart(data.topic_averages);
+            createStudentComparisonChart();
+            
+            // Grade distribution chart
+            createGradeDistributionChart(data);
+            
+        } catch (error) {
+            console.error('Error initializing charts:', error);
+        }
+    }
+
+    // CHART CREATION FUNCTIONS - ALL RESTORED
+
+    function createAreaChart(data) {
+        const ctx = document.getElementById('areaChart');
+        if (!ctx) return;
+        
+        if (teacherCharts.areaChart) teacherCharts.areaChart.destroy();
+        
+        teacherCharts.areaChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.dates || ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Class Average',
+                    data: data.scores || [72, 75, 78, 76],
+                    tension: 0.4,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: 'rgba(110,231,183,0.1)',
+                    borderColor: 'rgba(110,231,183,0.8)',
+                    pointBackgroundColor: 'rgba(110,231,183,1)',
+                    pointBorderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#9aa4b2' }
+                    },
+                    y: {
+                        ticks: { color: '#9aa4b2' },
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+    }
+
+    function createDayChart(dayData) {
+        const ctx = document.getElementById('dayChart');
+        if (!ctx) return;
+
+        const data = dayData || { Monday: 75, Tuesday: 82, Wednesday: 78, Thursday: 80, Friday: 76 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.dayChart) teacherCharts.dayChart.destroy();
+        
+        teacherCharts.dayChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        'rgba(96,165,250,0.8)',
+                        'rgba(45,212,191,0.8)',
+                        'rgba(249,115,22,0.8)',
+                        'rgba(139,92,246,0.8)',
+                        'rgba(236,72,153,0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '60%'
+            }
+        });
+
+        // Update day report
+        if (labels.length > 0) {
+            const bestDay = labels[values.indexOf(Math.max(...values))];
+            document.getElementById('dayReport').innerHTML = 
+                `<strong>Best day:</strong> ${bestDay} (${Math.max(...values)}%)`;
+        }
+    }
+
+    function createTeacherChart(teacherData) {
+        const ctx = document.getElementById('teacherChart');
+        if (!ctx) return;
+
+        const data = teacherData || { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.teacherChart) teacherCharts.teacherChart.destroy();
+        
+        teacherCharts.teacherChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: 'rgba(96,165,250,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                }
+            }
+        });
+    }
+
+    function createTopicChart(topicData) {
+        const ctx = document.getElementById('topicChart');
+        if (!ctx) return;
+
+        const data = topicData || { Algebra: 80, Geometry: 75, Statistics: 82 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.topicChart) teacherCharts.topicChart.destroy();
+        
+        teacherCharts.topicChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: 'rgba(249,115,22,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                }
+            }
+        });
+    }
+
+    function createTrendChart(data) {
+        const ctx = document.getElementById('trendChart');
+        if (!ctx) return;
+        
+        if (teacherCharts.trendChart) teacherCharts.trendChart.destroy();
+        
+        teacherCharts.trendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.dates || ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                datasets: [{
+                    label: 'Performance Trend',
+                    data: data.scores || [68, 72, 75, 71, 78],
+                    tension: 0.4,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: 'rgba(96,165,250,0.08)',
+                    borderColor: 'rgba(96,165,250,0.9)',
+                    pointBackgroundColor: 'rgba(96,165,250,1)',
+                    pointBorderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#9aa4b2' }
+                    },
+                    y: {
+                        ticks: { color: '#9aa4b2' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            }
+        });
+    }
+
+    function createSubjectBarChart(subjectData) {
+        const ctx = document.getElementById('subjectBarChart');
+        if (!ctx) return;
+
+        const data = subjectData || { Mathematics: 78, English: 82, Science: 75 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.subjectBarChart) teacherCharts.subjectBarChart.destroy();
+        
+        teacherCharts.subjectBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: values,
+                    backgroundColor: [
+                        'rgba(96,165,250,0.8)',
+                        'rgba(45,212,191,0.8)',
+                        'rgba(249,115,22,0.8)'
+                    ],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function createTopicBarChart(topicData) {
+        const ctx = document.getElementById('topicBarChart');
+        if (!ctx) return;
+
+        const data = topicData || { Algebra: 72, Geometry: 78, Trigonometry: 75, Statistics: 82 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.topicBarChart) teacherCharts.topicBarChart.destroy();
+        
+        teacherCharts.topicBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: values,
+                    backgroundColor: 'rgba(139,92,246,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                indexAxis: 'y'
+            }
+        });
+    }
+
+    function createDayImpactChart(dayData) {
+        const ctx = document.getElementById('dayImpactChart');
+        if (!ctx) return;
+
+        const data = dayData || { Monday: 75, Tuesday: 82, Wednesday: 78, Thursday: 80, Friday: 76 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.dayImpactChart) teacherCharts.dayImpactChart.destroy();
+        
+        teacherCharts.dayImpactChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: values,
+                    backgroundColor: 'rgba(16,185,129,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function createTeacherImpactChart(teacherData) {
+        const ctx = document.getElementById('teacherImpactChart');
+        if (!ctx) return;
+
+        const data = teacherData || { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78, 'Atieno': 76 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.teacherImpactChart) teacherCharts.teacherImpactChart.destroy();
+        
+        teacherCharts.teacherImpactChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: values,
+                    backgroundColor: 'rgba(236,72,153,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function createTopicDifficultyChart(topicData) {
+        const ctx = document.getElementById('topicDifficultyChart');
+        if (!ctx) return;
+
+        const data = topicData || { Algebra: 72, Geometry: 78, Trigonometry: 75, Statistics: 82 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.topicDifficultyChart) teacherCharts.topicDifficultyChart.destroy();
+        
+        teacherCharts.topicDifficultyChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: values,
+                    backgroundColor: 'rgba(245,158,11,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function createStudentComparisonChart() {
+        const ctx = document.getElementById('studentComparisonChart');
+        if (!ctx) return;
+
+        // Sample student data
+        const students = ['Samuel', 'Ruth', 'Dennis', 'Mercy', 'Kevin'];
+        const scores = [85, 78, 92, 74, 88];
+
+        if (teacherCharts.studentComparisonChart) teacherCharts.studentComparisonChart.destroy();
+        
+        teacherCharts.studentComparisonChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: students,
+                datasets: [{
+                    label: 'Average Score',
+                    data: scores,
+                    backgroundColor: 'rgba(99,102,241,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function createGradeDistributionChart(data) {
+        const ctx = document.getElementById('gradeDistributionChart');
+        if (!ctx) return;
+
+        // Sample grade distribution
+        const distributions = {
+            'A (90-100)': 15,
+            'B (80-89)': 25,
+            'C (70-79)': 35,
+            'D (60-69)': 15,
+            'F (0-59)': 10
+        };
+
+        if (teacherCharts.gradeDistributionChart) teacherCharts.gradeDistributionChart.destroy();
+        
+        teacherCharts.gradeDistributionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(distributions),
+                datasets: [{
+                    data: Object.values(distributions),
+                    backgroundColor: [
+                        'rgba(110,231,183,0.8)',
+                        'rgba(96,165,250,0.8)',
+                        'rgba(249,115,22,0.8)',
+                        'rgba(251,191,36,0.8)',
+                        'rgba(239,68,68,0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '60%'
+            }
+        });
+    }
+
+    function updateKPIs(data) {
+        // Update KPI cards
+        const scores = data.scores || [];
+        const avgScore = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '0';
+        
+        // Update student count
+        document.getElementById('kpi-students').textContent = currentStudents.length;
+
+        document.getElementById('kpi-avg').textContent = `${avgScore}%`;
+        document.getElementById('kpi-tests').textContent = scores.length;
+        document.getElementById('totalTests').textContent = scores.length;
+        
+        // Update subjects count
+        const subjects = Object.keys(data.subject_averages || {});
+        document.getElementById('kpi-subjects').textContent = subjects.length;
+        
+        // Find best day
+        const dayData = data.day_averages || {};
+        if (Object.keys(dayData).length > 0) {
+            const bestDay = Object.entries(dayData).reduce((a, b) => a[1] > b[1] ? a : b);
+            document.getElementById('bestDay').textContent = bestDay[0];
+        }
+        
+        // Find challenging topic
+        const topicData = data.topic_averages || {};
+        if (Object.keys(topicData).length > 0) {
+            const challengingTopic = Object.entries(topicData).reduce((a, b) => a[1] < b[1] ? a : b);
+            document.getElementById('challengingTopic').textContent = challengingTopic[0];
+        }
+    }
+
+    function updateSidebarData(data) {
+        // Update top students
+        const topStudentsList = document.getElementById('topStudentsList');
+        if (topStudentsList && currentStudents.length > 0) {
+            topStudentsList.innerHTML = currentStudents.slice(0, 3).map(student => `
+                <div class="list-item">
+                    <div>${student.full_name.split(' ')[0]}</div>
+                    <div style="color:var(--accent)">${student.avg_grade || 'N/A'}%</div>
+                </div>
+            `).join('');
+        }
+
+        // Update recent tests
+        const recentTests = document.getElementById('recent-tests');
+        if (recentTests) {
+            recentTests.innerHTML = `
+                <div class="list-item">
+                    <div>Mathematics Test</div>
+                    <div style="font-size:12px;color:var(--muted)">2 days ago</div>
+                </div>
+                <div class="list-item">
+                    <div>English Essay</div>
+                    <div style="font-size:12px;color:var(--muted)">1 week ago</div>
+                </div>
+                <div class="list-item">
+                    <div>Science Quiz</div>
+                    <div style="font-size:12px;color:var(--muted)">2 weeks ago</div>
+                </div>
+            `;
+        }
+
+        // Update performance factors
+        const performanceFactors = document.getElementById('performanceFactors');
+        if (performanceFactors) {
+            const dayData = data.day_averages || {};
+            const bestDay = Object.entries(dayData).reduce((a, b) => a[1] > b[1] ? a : b, ['', 0]);
+            
+            performanceFactors.innerHTML = `
+                <div class="list-item">
+                    <div>Best Day</div>
+                    <div style="color:var(--accent)">${bestDay[0]}</div>
+                </div>
+                <div class="list-item">
+                    <div>Avg Improvement</div>
+                    <div style="color:var(--accent)">+5.2%</div>
+                </div>
+            `;
+        }
+
+        // Update recommendations
+        const systemRecommendations = document.getElementById('systemRecommendations');
+        if (systemRecommendations) {
+            systemRecommendations.innerHTML = `
+                <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
+                    Focus on Algebra topics - students are struggling with this area.
+                </div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
+                    Schedule important tests on Tuesday for better results.
+                </div>
+            `;
+        }
+    }
+
+    function loadPanelData(panel) {
+        console.log('Loading panel:', panel);
+        if (panel === 'graph-data') {
+            // Refresh data when switching to graph data panel
+            loadOverviewData();
+        } else if (panel === 'input') {
+            // Refresh grades data when switching to input panel
+            loadGradesData();
+        }
+    }
+
+    function exportReport(reportType) {
+        const url = `/api/export-report?type=${reportType}`;
+        window.location.href = url;
+    }
+
+    function getSampleData() {
+        return {
+            dates: ['2024-01-01', '2024-01-08', '2024-01-15', '2024-01-22'],
+            scores: [72, 75, 78, 76],
+            day_averages: { Monday: 75, Tuesday: 82, Wednesday: 78, Thursday: 80, Friday: 76 },
+            teacher_averages: { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78 },
+            topic_averages: { Algebra: 72, Geometry: 78, Trigonometry: 75, Statistics: 82 },
+            subject_averages: { Mathematics: 78, English: 82, Science: 75 }
+        };
+    }
+
+    function hideFlashMessages() {
+        document.querySelectorAll('.flash-message').forEach(msg => {
+            msg.style.display = 'none';
+        });
+    }
+</script>
+</body>
+</html>
