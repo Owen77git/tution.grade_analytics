@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Dashboard — Student Performance Analytics</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root{
@@ -95,7 +96,7 @@
 
     /* Modal */
     .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(2,6,23,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
-    .modal{background:var(--panel);border-radius:12px;box-shadow:0 20px 60px rgba(2,6,23,0.8);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+    .modal{background:var(--panel);border-radius:12px;box-shadow:0 20px 60px rgba(2,6,23,0.8);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;}
     .modal-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;}
     .modal-header h2{font-size:18px;color:var(--accent);margin:0;}
     .modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
@@ -130,12 +131,161 @@
     .logout-btn{background:transparent;border:1px solid var(--muted);color:var(--muted);padding:8px 16px;border-radius:6px;cursor:pointer;transition:0.2s;width:100%;margin-top:10px;}
     .logout-btn:hover{border-color:var(--danger);color:var(--danger);}
 
+    /* Export section button */
+    .export-section-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+    .export-section-btn:hover {
+      background: var(--accent2);
+    }
+
+    /* Hard refresh button */
+    .hard-refresh-btn {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .hard-refresh-btn:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
+    .hard-refresh-btn:disabled {
+      background: var(--muted);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* CSV Upload Styles */
+    .csv-upload-section {
+      border: 2px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .csv-upload-section:hover {
+      border-color: var(--accent);
+    }
+    .csv-upload-section.drag-over {
+      border-color: var(--accent);
+      background: rgba(110,231,183,0.05);
+    }
+    .csv-info {
+      background: rgba(255,255,255,0.02);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    .csv-structure {
+      text-align: left;
+      margin-top: 10px;
+    }
+    .csv-structure ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .csv-structure li {
+      margin-bottom: 5px;
+    }
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 15px 0;
+    }
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    .file-input-label {
+      display: inline-block;
+      padding: 10px 20px;
+      background: var(--accent);
+      color: #021;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .file-input-label:hover {
+      background: var(--accent2);
+    }
+    .current-data-info {
+      background: rgba(251,113,133,0.1);
+      border: 1px solid rgba(251,113,133,0.3);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .current-data-info h4 {
+      color: var(--danger);
+      margin: 0 0 10px 0;
+    }
+
+    /* Data Management Section */
+    .data-management {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .data-management h3 {
+      margin: 0 0 16px 0;
+      color: var(--accent);
+    }
+    .data-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .data-action-card {
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid var(--accent);
+    }
+    .data-action-card.danger {
+      border-left-color: var(--danger);
+    }
+    .data-action-card h4 {
+      margin: 0 0 8px 0;
+      color: var(--accent);
+    }
+    .data-action-card.danger h4 {
+      color: var(--danger);
+    }
+    .data-action-card p {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
     /* responsive */
     @media (max-width:980px){
       .sidebar{display:none}
       .main{margin-left:0;}
       .top-cards{grid-template-columns:repeat(2,1fr)}
       .analytics-grid{grid-template-columns:1fr}
+      .data-actions{grid-template-columns:1fr}
     }
     @media (max-width:640px){
       .top-cards{grid-template-columns:1fr}
@@ -151,6 +301,7 @@
         <a href="#" class="active" data-panel="overview">System Overview</a>
         <a href="#" data-panel="students">All Students</a>
         <a href="#" data-panel="teachers">All Teachers</a>
+        <a href="#" data-panel="data-management">Data Management</a>
         <a href="#" data-panel="logs">System Logs</a>
         <a href="#" data-panel="settings">Settings</a>
         <button class="logout-btn" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
@@ -214,7 +365,9 @@
             <h2>System Performance Overview</h2>
             <div class="export-options">
               <button class="export-btn" id="refreshData">Refresh Data</button>
+              <button class="hard-refresh-btn" id="hardRefreshData">Hard Refresh All Data</button>
               <button class="export-btn" id="exportChartData">Export Chart Data</button>
+              <button class="export-section-btn" onclick="exportReport('comprehensive')">Export Full Report</button>
             </div>
           </div>
           <div class="chart-container">
@@ -231,6 +384,7 @@
             <div class="data-summary" id="subjectSummary">
               Loading subject analysis...
             </div>
+            <button class="export-section-btn" onclick="exportReport('performance_summary')" style="margin-top: 10px;">Export Subject Data</button>
           </div>
           <div class="analytics-card">
             <h4>Performance by Day</h4>
@@ -240,6 +394,7 @@
             <div class="data-summary" id="daySummary">
               Loading day analysis...
             </div>
+            <button class="export-section-btn" onclick="exportReport('performance_summary')" style="margin-top: 10px;">Export Day Data</button>
           </div>
           <div class="analytics-card">
             <h4>Teacher Performance</h4>
@@ -249,6 +404,7 @@
             <div class="data-summary" id="teacherSummary">
               Loading teacher analysis...
             </div>
+            <button class="export-section-btn" onclick="exportReport('teacher_analysis')" style="margin-top: 10px;">Export Teacher Data</button>
           </div>
           <div class="analytics-card">
             <h4>Topic Performance</h4>
@@ -258,12 +414,13 @@
             <div class="data-summary" id="topicSummary">
               Loading topic analysis...
             </div>
+            <button class="export-section-btn" onclick="exportReport('performance_summary')" style="margin-top: 10px;">Export Topic Data</button>
           </div>
         </div>
 
         <section class="recommendations">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-            <h3>System Recommendations</h3>
+            <h3>-------------------</h3><br>
             <button class="export-btn" id="refreshRecommendations">Refresh Recommendations</button>
           </div>
           <div id="recommendations-container">
@@ -283,6 +440,7 @@
             <div>
               <button class="btn" id="addStudentBtn">Add Student</button>
               <button class="btn ghost" id="exportStudentsReport">Export Report</button>
+              <button class="export-section-btn" onclick="exportReport('student_progress')">Export All Student Data</button>
             </div>
           </div>
 
@@ -324,6 +482,7 @@
             <div>
               <button class="btn" id="addTeacherBtn">Add Teacher</button>
               <button class="btn ghost" id="exportTeachersReport">Export Report</button>
+              <button class="export-section-btn" onclick="exportReport('teacher_analysis')">Export All Teacher Data</button>
             </div>
           </div>
 
@@ -356,6 +515,59 @@
         </section>
       </div>
 
+      <!-- DATA MANAGEMENT PANEL -->
+      <div class="panel-content hidden" id="data-management-panel">
+        <section class="data-management">
+          <h2>Data Management</h2>
+          <p style="color: var(--muted); margin-bottom: 20px;">Manage all system data including CSV uploads and data operations</p>
+
+          <div class="data-actions">
+            <div class="data-action-card">
+              <h4><i class="fas fa-file-csv"></i> Upload CSV Data</h4>
+              <p>Upload new CSV files to <strong>COMPLETELY REPLACE</strong> all system data with new student performance data</p>
+              <button class="btn" id="adminUploadCsvBtn" style="width: 100%;">
+                <i class="fas fa-upload"></i> Upload CSV File
+              </button>
+            </div>
+
+            <div class="data-action-card danger">
+              <h4><i class="fas fa-trash"></i> Delete All Data</h4>
+              <p>Permanently remove all grade data from the system. This action cannot be undone.</p>
+              <button class="btn danger" id="adminDeleteAllDataBtn" style="width: 100%;">
+                <i class="fas fa-trash"></i> Delete All Grades
+              </button>
+            </div>
+          </div>
+
+          <!-- Current Data Stats -->
+          <div style="margin-top: 24px; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px;">
+            <h4 style="margin: 0 0 12px 0; color: var(--accent);">Current Data Statistics</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+              <div>
+                <div style="font-size: 12px; color: var(--muted);">Total Grades</div>
+                <div style="font-size: 20px; font-weight: 700;" id="currentGradesCount">0</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: var(--muted);">Total Students</div>
+                <div style="font-size: 20px; font-weight: 700;" id="currentStudentsCount">0</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: var(--muted);">Total Subjects</div>
+                <div style="font-size: 20px; font-weight: 700;" id="currentSubjectsCount">0</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: var(--muted);">Total Teachers</div>
+                <div style="font-size: 20px; font-weight: 700;" id="currentTeachersCount">0</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: var(--muted);">Last Updated</div>
+                <div style="font-size: 12px; font-weight: 600;" id="lastUpdated">Never</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
       <!-- LOGS PANEL -->
       <div class="panel-content hidden" id="logs-panel">
         <section class="chart-box">
@@ -364,6 +576,7 @@
             <div>
               <button class="btn ghost" id="exportLogsBtn">Export Logs</button>
               <button class="btn" id="refreshLogsBtn">Refresh</button>
+              <button class="export-section-btn" onclick="exportReport('comprehensive')">Export All Logs</button>
             </div>
           </div>
 
@@ -497,7 +710,76 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Admin CSV Upload Modal -->
+  <div class="modal-overlay hidden" id="adminCsvUploadModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Upload CSV Data</h2>
+        <button class="modal-close" id="closeAdminCsvUploadModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="current-data-info">
+          <h4>⚠️ Complete Data Replacement</h4>
+          <p>Uploading a new CSV file will <strong>COMPLETELY REPLACE ALL EXISTING DATA</strong> in the system including:</p>
+          <ul>
+            <li>All student records</li>
+            <li>All teacher records</li>
+            <li>All subject records</li>
+            <li>All grade records</li>
+          </ul>
+          <p><strong>This action cannot be undone.</strong> Make sure you have a backup if needed.</p>
+        </div>
+
+        <div class="csv-upload-section" id="adminCsvDropZone">
+          <i class="fas fa-file-csv" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
+          <h3>Upload CSV File</h3>
+          <p style="color: var(--muted); margin-bottom: 20px;">Drag & drop your CSV file here or click to browse</p>
+          
+          <div class="file-input-wrapper">
+            <input type="file" id="adminCsvFileInput" accept=".csv">
+            <label for="adminCsvFileInput" class="file-input-label">
+              <i class="fas fa-upload"></i> Choose CSV File
+            </label>
+          </div>
+          
+          <div id="adminFileName" style="margin-top: 10px; font-size: 14px; color: var(--accent);"></div>
+        </div>
+
+        <div class="csv-info">
+          <h4>CSV File Requirements</h4>
+          <p>Your CSV file must include the following columns:</p>
+          <div class="csv-structure">
+            <ul>
+              <li><strong>Student_ID</strong> - Unique student identifier</li>
+              <li><strong>Student_Name</strong> - Full student name</li>
+              <li><strong>Subject</strong> - Subject name</li>
+              <li><strong>Topic</strong> - Topic or chapter</li>
+              <li><strong>Test_Date</strong> - Date in YYYY-MM-DD format</li>
+              <li><strong>Day</strong> - Day of week</li>
+              <li><strong>Teacher_Name</strong> - Teacher's full name</li>
+              <li><strong>Score</strong> - Numeric score (0-100)</li>
+            </ul>
+          </div>
+          <p style="margin-top: 10px;">
+            <a href="/static/sample_grades.csv" download style="color: var(--accent); text-decoration: none;">
+              <i class="fas fa-download"></i> Download Sample CSV Template
+            </a>
+          </p>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+          <label>
+            <input type="checkbox" id="adminConfirmReplace">
+            I understand this will <strong>COMPLETELY REPLACE ALL EXISTING DATA</strong>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="adminConfirmCsvUpload" disabled>Upload & Replace All Data</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Global variables
     let adminCharts = {};
@@ -511,6 +793,7 @@
       setupNavigation();
       loadDashboardData();
       setupEventListeners();
+      updateDataStats();
       setTimeout(hideFlashMessages, 5000);
     });
 
@@ -537,6 +820,7 @@
     function setupEventListeners() {
       // Refresh buttons
       document.getElementById('refreshData').addEventListener('click', loadDashboardData);
+      document.getElementById('hardRefreshData').addEventListener('click', hardRefreshAllData);
       document.getElementById('refreshLogsBtn').addEventListener('click', loadLogsData);
       document.getElementById('refreshStudents').addEventListener('click', loadStudentsData);
       document.getElementById('refreshTeachers').addEventListener('click', loadTeachersData);
@@ -550,6 +834,14 @@
         document.getElementById('addStudentModal').classList.remove('hidden');
       });
 
+      // Data Management buttons
+      document.getElementById('adminUploadCsvBtn').addEventListener('click', function() {
+        document.getElementById('adminCsvUploadModal').classList.remove('hidden');
+      });
+      document.getElementById('adminDeleteAllDataBtn').addEventListener('click', function() {
+        deleteAllSystemData();
+      });
+
       // Modal controls
       document.getElementById('closeAddTeacherModal').addEventListener('click', () => {
         document.getElementById('addTeacherModal').classList.add('hidden');
@@ -557,11 +849,32 @@
       document.getElementById('closeAddStudentModal').addEventListener('click', () => {
         document.getElementById('addStudentModal').classList.add('hidden');
       });
+      document.getElementById('closeAdminCsvUploadModal').addEventListener('click', () => {
+        document.getElementById('adminCsvUploadModal').classList.add('hidden');
+        resetAdminCsvUploadForm();
+      });
       document.getElementById('cancelAddTeacher').addEventListener('click', () => {
         document.getElementById('addTeacherModal').classList.add('hidden');
       });
       document.getElementById('cancelAddStudent').addEventListener('click', () => {
         document.getElementById('addStudentModal').classList.add('hidden');
+      });
+
+      // CSV Upload functionality
+      document.getElementById('adminCsvFileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          document.getElementById('adminFileName').textContent = `Selected: ${file.name}`;
+          document.getElementById('adminConfirmCsvUpload').disabled = !document.getElementById('adminConfirmReplace').checked;
+        }
+      });
+
+      document.getElementById('adminConfirmReplace').addEventListener('change', function() {
+        document.getElementById('adminConfirmCsvUpload').disabled = !this.checked || !document.getElementById('adminCsvFileInput').files[0];
+      });
+
+      document.getElementById('adminConfirmCsvUpload').addEventListener('click', function() {
+        uploadAdminCsvFile();
       });
 
       // Confirm actions
@@ -580,6 +893,180 @@
 
       // Save settings
       document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+
+      // Setup drag and drop for CSV upload
+      setupAdminCsvDragAndDrop();
+    }
+
+    function setupAdminCsvDragAndDrop() {
+      const dropZone = document.getElementById('adminCsvDropZone');
+      
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+      });
+      
+      dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+      });
+      
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.name.endsWith('.csv')) {
+            document.getElementById('adminCsvFileInput').files = files;
+            document.getElementById('adminFileName').textContent = `Selected: ${file.name}`;
+            document.getElementById('adminConfirmCsvUpload').disabled = !document.getElementById('adminConfirmReplace').checked;
+          } else {
+            alert('Please drop a CSV file only.');
+          }
+        }
+      });
+    }
+
+    function resetAdminCsvUploadForm() {
+      document.getElementById('adminCsvFileInput').value = '';
+      document.getElementById('adminFileName').textContent = '';
+      document.getElementById('adminConfirmReplace').checked = false;
+      document.getElementById('adminConfirmCsvUpload').disabled = true;
+    }
+
+    function uploadAdminCsvFile() {
+      const fileInput = document.getElementById('adminCsvFileInput');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert('Please select a CSV file first.');
+        return;
+      }
+      
+      if (!document.getElementById('adminConfirmReplace').checked) {
+        alert('Please confirm that you understand this will COMPLETELY REPLACE ALL existing data.');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('csv_file', file);
+      
+      // Show loading state
+      const uploadBtn = document.getElementById('adminConfirmCsvUpload');
+      const originalText = uploadBtn.textContent;
+      uploadBtn.textContent = 'Replacing All Data...';
+      uploadBtn.disabled = true;
+      
+      fetch('/admin/upload-csv', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(`✅ Complete Data Replacement Successful!\n\nAdded:\n• ${data.grades_added} grades\n• ${data.students_created} students\n• ${data.subjects_created} subjects\n• ${data.teachers_created} teachers`);
+          document.getElementById('adminCsvUploadModal').classList.add('hidden');
+          resetAdminCsvUploadForm();
+          
+          // Refresh all data
+          loadDashboardData();
+          updateDataStats();
+          loadStudentsData();
+          loadTeachersData();
+        } else {
+          alert('❌ Error: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error uploading CSV:', error);
+        alert('Error uploading CSV file. Please try again.');
+      })
+      .finally(() => {
+        uploadBtn.textContent = originalText;
+        uploadBtn.disabled = false;
+      });
+    }
+
+    function deleteAllSystemData() {
+      if (confirm('⚠️ ARE YOU SURE?\n\nThis will permanently delete ALL grade data from the entire system. This action cannot be undone.\n\nClick OK to confirm deletion.')) {
+        fetch('/admin/delete-all-grades', {
+          method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(`Successfully deleted ${data.deleted_count} grades from the system.`);
+            
+            // Refresh all data
+            loadDashboardData();
+            updateDataStats();
+            loadStudentsData();
+            loadTeachersData();
+          } else {
+            alert('Error: ' + data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting grades:', error);
+          alert('Error deleting grades. Please try again.');
+        });
+      }
+    }
+
+    function updateDataStats() {
+      // Fetch current data statistics
+      fetch('/api/performance-data')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('currentGradesCount').textContent = data.total_grades || 0;
+          document.getElementById('currentStudentsCount').textContent = currentUsers.filter(user => user.role === 'student').length;
+          document.getElementById('currentSubjectsCount').textContent = Object.keys(data.subject_averages || {}).length;
+          document.getElementById('currentTeachersCount').textContent = currentUsers.filter(user => user.role === 'teacher').length;
+          document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        })
+        .catch(error => {
+          console.error('Error updating data stats:', error);
+        });
+    }
+
+    function hardRefreshAllData() {
+      if (confirm('⚠️ HARD REFRESH ALL DATA?\n\nThis will:\n• Delete ALL existing grade data\n• Re-import from teacher CSV files\n• Refresh all charts and statistics\n\nThis action cannot be undone. Continue?')) {
+        const btn = document.getElementById('hardRefreshData');
+        const originalText = btn.textContent;
+        btn.textContent = 'Refreshing...';
+        btn.disabled = true;
+        
+        fetch('/admin/refresh-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('✅ ' + data.message);
+            // Reload all data
+            loadDashboardData();
+            loadUsersData();
+            loadStudentsData();
+            loadTeachersData();
+            updateDataStats();
+          } else {
+            alert('❌ ' + data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error refreshing data:', error);
+          alert('Error refreshing data. Please try again.');
+        })
+        .finally(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        });
+      }
     }
 
     function loadDashboardData() {
@@ -587,7 +1074,10 @@
       
       // Load performance data
       fetch('/api/performance-data')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
         .then(data => {
           updateDashboardCharts(data);
           updateDashboardStats(data);
@@ -609,6 +1099,9 @@
         case 'teachers':
           loadTeachersData();
           break;
+        case 'data-management':
+          updateDataStats();
+          break;
         case 'logs':
           loadLogsData();
           break;
@@ -617,7 +1110,10 @@
 
     function loadUsersData() {
       fetch('/admin/users')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load users');
+          return response.json();
+        })
         .then(users => {
           currentUsers = users;
           updateDashboardStatsFromUsers(users);
@@ -629,7 +1125,10 @@
 
     function loadStudentsData() {
       fetch('/admin/students')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load students');
+          return response.json();
+        })
         .then(students => {
           currentStudents = students;
           updateStudentsTable(students);
@@ -641,7 +1140,10 @@
 
     function loadTeachersData() {
       fetch('/admin/teachers')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load teachers');
+          return response.json();
+        })
         .then(teachers => {
           currentTeachers = teachers;
           updateTeachersTable(teachers);
@@ -653,7 +1155,10 @@
 
     function loadLogsData() {
       fetch('/api/system-logs')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load logs');
+          return response.json();
+        })
         .then(logs => {
           currentLogs = logs;
           updateLogsTable(logs);
@@ -664,8 +1169,11 @@
     }
 
     function loadRecommendations() {
-      fetch('/api/system-recommendations')
-        .then(response => response.json())
+      fetch('/api/performance-insights')
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load recommendations');
+          return response.json();
+        })
         .then(recommendations => {
           updateRecommendations(recommendations);
         })
@@ -676,7 +1184,7 @@
     }
 
     function updateDashboardCharts(data) {
-      // Performance Trend Chart
+      // Performance Trend Chart - using real data
       const ctxPerf = document.getElementById('performanceChart');
       if (adminCharts.performance) adminCharts.performance.destroy();
       
@@ -707,11 +1215,11 @@
         }
       });
 
-      // Subject Chart
+      // Subject Chart - using real data
       const ctxSubject = document.getElementById('subjectChart');
       if (adminCharts.subject) adminCharts.subject.destroy();
       
-      const subjectData = data.subject_averages || { Mathematics: 78, English: 75, Science: 72, History: 80 };
+      const subjectData = data.subject_averages || {};
       const subjectLabels = Object.keys(subjectData);
       const subjectValues = Object.values(subjectData);
       
@@ -737,11 +1245,11 @@
         }
       });
 
-      // Day Chart
+      // Day Chart - using real data
       const ctxDay = document.getElementById('dayChart');
       if (adminCharts.day) adminCharts.day.destroy();
       
-      const dayData = data.day_averages || { Monday: 75, Tuesday: 82, Wednesday: 78, Thursday: 80, Friday: 76 };
+      const dayData = data.day_averages || {};
       const dayLabels = Object.keys(dayData);
       const dayValues = Object.values(dayData);
       
@@ -767,11 +1275,11 @@
         }
       });
 
-      // Teacher Chart
+      // Teacher Chart - using real data
       const ctxTeacher = document.getElementById('teacherChart');
       if (adminCharts.teacher) adminCharts.teacher.destroy();
       
-      const teacherData = data.teacher_averages || { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78, 'Atieno': 76 };
+      const teacherData = data.teacher_averages || {};
       const teacherLabels = Object.keys(teacherData);
       const teacherValues = Object.values(teacherData);
       
@@ -796,11 +1304,11 @@
         }
       });
 
-      // Topic Chart
+      // Topic Chart - using real data
       const ctxTopic = document.getElementById('topicChart');
       if (adminCharts.topic) adminCharts.topic.destroy();
       
-      const topicData = data.topic_averages || { Algebra: 72, Geometry: 78, Trigonometry: 75, Statistics: 82 };
+      const topicData = data.topic_averages || {};
       const topicLabels = Object.keys(topicData);
       const topicValues = Object.values(topicData);
       
@@ -827,7 +1335,7 @@
         }
       });
 
-      // Update summaries
+      // Update summaries with real data
       updateChartSummaries(data);
     }
 
@@ -842,6 +1350,9 @@
         const bestSubject = Object.entries(subjectData).reduce((a, b) => a[1] > b[1] ? a : b);
         document.getElementById('subjectSummary').innerHTML = 
           `<strong>Best subject:</strong> ${bestSubject[0]} (${bestSubject[1]}%)`;
+      } else {
+        document.getElementById('subjectSummary').innerHTML = 
+          `<strong>No subject data available</strong>`;
       }
 
       // Day summary
@@ -849,6 +1360,9 @@
         const bestDay = Object.entries(dayData).reduce((a, b) => a[1] > b[1] ? a : b);
         document.getElementById('daySummary').innerHTML = 
           `<strong>Best day:</strong> ${bestDay[0]} (${bestDay[1]}%)`;
+      } else {
+        document.getElementById('daySummary').innerHTML = 
+          `<strong>No day data available</strong>`;
       }
 
       // Teacher summary
@@ -856,6 +1370,9 @@
         const bestTeacher = Object.entries(teacherData).reduce((a, b) => a[1] > b[1] ? a : b);
         document.getElementById('teacherSummary').innerHTML = 
           `<strong>Top teacher:</strong> ${bestTeacher[0]} (${bestTeacher[1]}%)`;
+      } else {
+        document.getElementById('teacherSummary').innerHTML = 
+          `<strong>No teacher data available</strong>`;
       }
 
       // Topic summary
@@ -865,6 +1382,9 @@
         document.getElementById('topicSummary').innerHTML = 
           `<strong>Best topic:</strong> ${bestTopic[0]}<br>
            <strong>Needs attention:</strong> ${worstTopic[0]}`;
+      } else {
+        document.getElementById('topicSummary').innerHTML = 
+          `<strong>No topic data available</strong>`;
       }
     }
 
@@ -908,7 +1428,7 @@
           <td>${student.full_name || 'N/A'}</td>
           <td>${student.username || 'N/A'}</td>
           <td>${student.grade_level || 'N/A'}</td>
-          <td>${student.average_grade || '0'}%</td>
+          <td>${student.avg_grade || '0'}%</td>
           <td>${student.test_count || 0}</td>
           <td><span style="color:${statusColor}">${student.status || 'active'}</span></td>
           <td>
