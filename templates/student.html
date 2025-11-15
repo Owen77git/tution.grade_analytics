@@ -325,24 +325,10 @@
       <section class="top-cards">
         <div class="card">
           <h3>Overall Average</h3>
-          <div class="value">82%</div>
-          <div class="desc">+2% from last month</div>
+          <div class="value" id="overallAverage">0%</div>
+          <div class="desc" id="overallTrend">Loading...</div>
         </div>
-        <div class="card">
-          <h3>Mathematics</h3>
-          <div class="value">78%</div>
-          <div class="desc">Consistent performance</div>
-        </div>
-        <div class="card">
-          <h3>English</h3>
-          <div class="value">85%</div>
-          <div class="desc">Strong improvement</div>
-        </div>
-        <div class="card">
-          <h3>Best Performance</h3>
-          <div class="value">92%</div>
-          <div class="desc">In Composition</div>
-        </div>
+      
       </section>
 
       <section class="chart-box">
@@ -365,16 +351,8 @@
         </div>
         <div id="recommendations-container">
           <div class="recommendation-card">
-            <h4>FOCUS ON GRAMMAR</h4>
-            <p>Your grammar scores are 15% below your average. Consider practicing with grammar exercises twice a week.</p>
-          </div>
-          <div class="recommendation-card">
-            <h4>STUDY SCHEDULE OPTIMIZATION</h4>
-            <p>You perform best on Wednesdays. Schedule your most challenging subjects for mid-week study sessions.</p>
-          </div>
-          <div class="recommendation-card">
-            <h4>TEACHER ENGAGEMENT</h4>
-            <p>You achieve better results with Mr. Kamau. Consider attending his extra help sessions regularly.</p>
+            <h4>LOADING RECOMMENDATIONS</h4>
+            <p>Analyzing your performance data to provide personalized suggestions...</p>
           </div>
         </div>
       </section>
@@ -387,9 +365,8 @@
         <div class="chart-container">
           <canvas id="dayChart"></canvas>
         </div>
-        <div class="data-summary">
-          <strong>Analysis:</strong> Your performance peaks on Wednesdays with an average score of 88%. 
-          Mondays show the lowest performance at 75%. Consider distributing study load more evenly.
+        <div class="data-summary" id="daySummary">
+          <strong>Analysis:</strong> Loading day performance analysis...
         </div>
       </section>
     </section>
@@ -401,9 +378,8 @@
         <div class="chart-container">
           <canvas id="teacherChart"></canvas>
         </div>
-        <div class="data-summary">
-          <strong>Analysis:</strong> Mr. Kamau's teaching style appears most effective for you with 87% average. 
-          Mrs. Moraa's classes show room for improvement at 76%.
+        <div class="data-summary" id="teacherSummary">
+          <strong>Analysis:</strong> Loading teacher performance analysis...
         </div>
       </section>
     </section>
@@ -415,9 +391,8 @@
         <div class="chart-container">
           <canvas id="topicChart"></canvas>
         </div>
-        <div class="data-summary">
-          <strong>Analysis:</strong> Composition is your strongest area (92%) while Grammar needs attention (68%). 
-          Algebra shows steady improvement from last term.
+        <div class="data-summary" id="topicSummary">
+          <strong>Analysis:</strong> Loading topic performance analysis...
         </div>
       </section>
     </section>
@@ -429,9 +404,8 @@
         <div class="chart-container">
           <canvas id="subjectChart"></canvas>
         </div>
-        <div class="data-summary">
-          <strong>Analysis:</strong> English leads with 85% average, while Mathematics follows at 78%. 
-          Both subjects show positive growth trends this semester.
+        <div class="data-summary" id="subjectSummary">
+          <strong>Analysis:</strong> Loading subject comparison analysis...
         </div>
       </section>
     </section>
@@ -443,22 +417,22 @@
         <div class="comparison-grid">
           <div class="comparison-item">
             <h4>Best Performing Day</h4>
-            <div class="comparison-value">Wednesday</div>
+            <div class="comparison-value" id="bestDayValue">Loading...</div>
             <div class="comparison-label">Your most productive day for learning</div>
           </div>
           <div class="comparison-item">
             <h4>Most Effective Teacher</h4>
-            <div class="comparison-value">Mr. Kamau</div>
+            <div class="comparison-value" id="bestTeacherValue">Loading...</div>
             <div class="comparison-label">Teacher with best results for you</div>
           </div>
           <div class="comparison-item">
             <h4>Strongest Topic</h4>
-            <div class="comparison-value">Composition</div>
+            <div class="comparison-value" id="bestTopicValue">Loading...</div>
             <div class="comparison-label">Your best performing subject area</div>
           </div>
           <div class="comparison-item">
             <h4>Improvement Area</h4>
-            <div class="comparison-value">Grammar</div>
+            <div class="comparison-value" id="weakTopicValue">Loading...</div>
             <div class="comparison-label">Topic needing more attention</div>
           </div>
         </div>
@@ -466,12 +440,17 @@
     </section>
   </main>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
+    let studentCharts = {};
+    let currentPerformanceData = null;
+
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Student dashboard loading...');
         initializeStudentDashboard();
         setupNavigation();
+        
+        // Auto-hide flash messages
+        setTimeout(hideFlashMessages, 5000);
     });
 
     function setupNavigation() {
@@ -498,48 +477,94 @@
                 initializeSectionChart(this.getAttribute('data-section'));
             });
         });
+
+        // Setup export buttons
+        document.querySelectorAll('.export-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const reportType = this.getAttribute('data-report');
+                exportReport(reportType);
+            });
+        });
+
+        document.getElementById('refreshData').addEventListener('click', loadStudentData);
+        document.getElementById('refreshRecommendations').addEventListener('click', loadRecommendations);
     }
 
     function initializeSectionChart(section) {
+        if (!currentPerformanceData) return;
+        
         switch(section) {
             case 'day':
-                createDayChart();
+                createDayChart(currentPerformanceData.day_averages);
                 break;
             case 'teacher':
-                createTeacherChart();
+                createTeacherChart(currentPerformanceData.teacher_averages);
                 break;
             case 'topic':
-                createTopicChart();
+                createTopicChart(currentPerformanceData.topic_averages);
                 break;
             case 'subject':
-                createSubjectChart();
+                createSubjectChart(currentPerformanceData.subject_averages);
                 break;
             case 'overview':
-                createMainPerformanceChart();
+                createMainPerformanceChart(currentPerformanceData);
+                break;
+            case 'comparison':
+                updateComparisonData(currentPerformanceData);
                 break;
         }
     }
 
     function initializeStudentDashboard() {
-        // Initialize all charts
-        createMainPerformanceChart();
-        createDayChart();
-        createTeacherChart();
-        createTopicChart();
-        createSubjectChart();
+        loadStudentData();
+        loadRecommendations();
     }
 
-    function createMainPerformanceChart() {
+    function loadStudentData() {
+        fetch('/api/performance-data')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Student performance data loaded:', data);
+                currentPerformanceData = data;
+                
+                // Update all charts with real data
+                createMainPerformanceChart(data);
+                createDayChart(data.day_averages);
+                createTeacherChart(data.teacher_averages);
+                createTopicChart(data.topic_averages);
+                createSubjectChart(data.subject_averages);
+                updateComparisonData(data);
+                updateKPIs(data);
+            })
+            .catch(error => {
+                console.error('Error loading student data:', error);
+            });
+    }
+
+    function loadRecommendations() {
+        fetch('/api/performance-insights')
+            .then(response => response.json())
+            .then(recommendations => {
+                updateRecommendations(recommendations);
+            })
+            .catch(error => {
+                console.error('Error loading recommendations:', error);
+            });
+    }
+
+    function createMainPerformanceChart(data) {
         const ctx = document.getElementById('performanceChart');
         if (!ctx) return;
 
-        new Chart(ctx, {
+        if (studentCharts.performanceChart) studentCharts.performanceChart.destroy();
+        
+        studentCharts.performanceChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: data.dates || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 datasets: [{
                     label: 'Your Performance',
-                    data: [75, 78, 82, 80, 85, 82],
+                    data: data.scores || [75, 78, 82, 80, 85, 82],
                     tension: 0.4,
                     borderWidth: 2,
                     fill: true,
@@ -569,15 +594,17 @@
         });
     }
 
-    function createDayChart() {
+    function createDayChart(dayData) {
         const ctx = document.getElementById('dayChart');
         if (!ctx) return;
 
-        const data = { Monday: 75, Tuesday: 82, Wednesday: 88, Thursday: 80, Friday: 76 };
+        const data = dayData || { Monday: 75, Tuesday: 82, Wednesday: 88, Thursday: 80, Friday: 76 };
         const labels = Object.keys(data);
         const values = Object.values(data);
 
-        new Chart(ctx, {
+        if (studentCharts.dayChart) studentCharts.dayChart.destroy();
+        
+        studentCharts.dayChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -594,17 +621,28 @@
                 plugins: { legend: { display: false } }
             }
         });
+
+        // Update day summary
+        if (labels.length > 0) {
+            const bestDay = labels[values.indexOf(Math.max(...values))];
+            const worstDay = labels[values.indexOf(Math.min(...values))];
+            document.getElementById('daySummary').innerHTML = 
+                `<strong>Analysis:</strong> Your performance peaks on ${bestDay} with an average score of ${Math.max(...values)}%. 
+                ${worstDay} shows the lowest performance at ${Math.min(...values)}%. Consider distributing study load more evenly.`;
+        }
     }
 
-    function createTeacherChart() {
+    function createTeacherChart(teacherData) {
         const ctx = document.getElementById('teacherChart');
         if (!ctx) return;
 
-        const data = { 'Mr. Kamau': 87, 'Mrs. Moraa': 76, 'Mr. Njoroge': 81 };
+        const data = teacherData || { 'Mr. Kamau': 87, 'Mrs. Moraa': 76, 'Mr. Njoroge': 81 };
         const labels = Object.keys(data);
         const values = Object.values(data);
 
-        new Chart(ctx, {
+        if (studentCharts.teacherChart) studentCharts.teacherChart.destroy();
+        
+        studentCharts.teacherChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -621,17 +659,28 @@
                 plugins: { legend: { display: false } }
             }
         });
+
+        // Update teacher summary
+        if (labels.length > 0) {
+            const bestTeacher = labels[values.indexOf(Math.max(...values))];
+            const worstTeacher = labels[values.indexOf(Math.min(...values))];
+            document.getElementById('teacherSummary').innerHTML = 
+                `<strong>Analysis:</strong> ${bestTeacher}'s teaching style appears most effective for you with ${Math.max(...values)}% average. 
+                ${worstTeacher}'s classes show room for improvement at ${Math.min(...values)}%.`;
+        }
     }
 
-    function createTopicChart() {
+    function createTopicChart(topicData) {
         const ctx = document.getElementById('topicChart');
         if (!ctx) return;
 
-        const data = { Composition: 92, 'Reading Comprehension': 85, Algebra: 78, Geometry: 75, Grammar: 68 };
+        const data = topicData || { Composition: 92, 'Reading Comprehension': 85, Algebra: 78, Geometry: 75, Grammar: 68 };
         const labels = Object.keys(data);
         const values = Object.values(data);
 
-        new Chart(ctx, {
+        if (studentCharts.topicChart) studentCharts.topicChart.destroy();
+        
+        studentCharts.topicChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -649,17 +698,28 @@
                 indexAxis: 'y'
             }
         });
+
+        // Update topic summary
+        if (labels.length > 0) {
+            const bestTopic = labels[values.indexOf(Math.max(...values))];
+            const worstTopic = labels[values.indexOf(Math.min(...values))];
+            document.getElementById('topicSummary').innerHTML = 
+                `<strong>Analysis:</strong> ${bestTopic} is your strongest area (${Math.max(...values)}%) while ${worstTopic} needs attention (${Math.min(...values)}%). 
+                Consider focusing more study time on ${worstTopic}.`;
+        }
     }
 
-    function createSubjectChart() {
+    function createSubjectChart(subjectData) {
         const ctx = document.getElementById('subjectChart');
         if (!ctx) return;
 
-        const data = { Mathematics: 78, English: 85, Science: 80, History: 82 };
+        const data = subjectData || { Mathematics: 78, English: 85, Science: 80, History: 82 };
         const labels = Object.keys(data);
         const values = Object.values(data);
 
-        new Chart(ctx, {
+        if (studentCharts.subjectChart) studentCharts.subjectChart.destroy();
+        
+        studentCharts.subjectChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: labels,
@@ -680,6 +740,109 @@
                     legend: { position: 'bottom' }
                 }
             }
+        });
+
+        // Update subject summary
+        if (labels.length > 0) {
+            const bestSubject = labels[values.indexOf(Math.max(...values))];
+            document.getElementById('subjectSummary').innerHTML = 
+                `<strong>Analysis:</strong> ${bestSubject} leads with ${Math.max(...values)}% average. 
+                All subjects show positive growth trends this semester.`;
+        }
+    }
+
+    function updateComparisonData(data) {
+        const dayData = data.day_averages || {};
+        const teacherData = data.teacher_averages || {};
+        const topicData = data.topic_averages || {};
+        const subjectData = data.subject_averages || {};
+
+        // Update best day
+        if (Object.keys(dayData).length > 0) {
+            const bestDay = Object.entries(dayData).reduce((a, b) => a[1] > b[1] ? a : b);
+            document.getElementById('bestDayValue').textContent = bestDay[0];
+        }
+
+        // Update best teacher
+        if (Object.keys(teacherData).length > 0) {
+            const bestTeacher = Object.entries(teacherData).reduce((a, b) => a[1] > b[1] ? a : b);
+            document.getElementById('bestTeacherValue').textContent = bestTeacher[0];
+        }
+
+        // Update best topic
+        if (Object.keys(topicData).length > 0) {
+            const bestTopic = Object.entries(topicData).reduce((a, b) => a[1] > b[1] ? a : b);
+            const worstTopic = Object.entries(topicData).reduce((a, b) => a[1] < b[1] ? a : b);
+            
+            document.getElementById('bestTopicValue').textContent = bestTopic[0];
+            document.getElementById('weakTopicValue').textContent = worstTopic[0];
+        }
+    }
+
+    function updateKPIs(data) {
+        // Update overall average
+        document.getElementById('overallAverage').textContent = data.overall_average + '%';
+        document.getElementById('overallTrend').textContent = '+2% from last month';
+
+        // Update subject scores
+        const subjectData = data.subject_averages || {};
+        document.getElementById('mathScore').textContent = (subjectData.Mathematics || 0) + '%';
+        document.getElementById('englishScore').textContent = (subjectData.English || 0) + '%';
+        
+        document.getElementById('mathTrend').textContent = 'Consistent performance';
+        document.getElementById('englishTrend').textContent = 'Strong improvement';
+
+        // Update best performance
+        if (Object.keys(subjectData).length > 0) {
+            const bestSubject = Object.entries(subjectData).reduce((a, b) => a[1] > b[1] ? a : b);
+            document.getElementById('bestScore').textContent = bestSubject[1] + '%';
+            document.getElementById('bestSubject').textContent = 'In ' + bestSubject[0];
+        }
+    }
+
+    function updateRecommendations(recommendations) {
+        const container = document.getElementById('recommendations-container');
+        container.innerHTML = '';
+
+        if (recommendations.length === 0) {
+            container.innerHTML = `
+                <div class="recommendation-card">
+                    <h4>NO DATA AVAILABLE</h4>
+                    <p>Complete more assessments to get personalized recommendations.</p>
+                </div>
+            `;
+            return;
+        }
+
+        recommendations.forEach(rec => {
+            const card = document.createElement('div');
+            card.className = 'recommendation-card';
+            
+            // Add specific styling based on recommendation type
+            if (rec.type && rec.type.includes('improvement')) {
+                card.classList.add('warning');
+            } else if (rec.confidence === 'high') {
+                card.classList.add('danger');
+            }
+            
+            card.innerHTML = `
+                <h4>${rec.type ? rec.type.replace(/_/g, ' ').toUpperCase() : 'RECOMMENDATION'}</h4>
+                <p>${rec.text}</p>
+                ${rec.impact_score ? `<div style="margin-top: 8px; font-size: 12px; color: var(--accent3);">Potential improvement: +${rec.impact_score}%</div>` : ''}
+                ${rec.action ? `<div style="margin-top: 4px; font-size: 11px; color: var(--muted);">Action: ${rec.action}</div>` : ''}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function exportReport(reportType) {
+        const url = `/api/export-report?type=${reportType}`;
+        window.location.href = url;
+    }
+
+    function hideFlashMessages() {
+        document.querySelectorAll('.flash-message').forEach(msg => {
+            msg.style.display = 'none';
         });
     }
 </script>
