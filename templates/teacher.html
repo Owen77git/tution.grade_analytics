@@ -332,38 +332,6 @@
       border-radius: 8px;
       border-left: 3px solid var(--accent-2);
     }
-    /* White text for add grade section labels */
-#addGradeModal .form-group label {
-    color: #fff !important;
-}
-
-/* White text for student and subject sections */
-#addGradeModal .student-section,
-#addGradeModal .subject-section {
-    color: #fff;
-}
-
-/* White text for student and subject options */
-#addGradeModal .student-option,
-#addGradeModal .subject-option {
-    color: #fff;
-}
-
-/* White text for preview content */
-#addGradeModal .grade-preview,
-#addGradeModal #previewContent {
-    color: #fff;
-}
-
-/* White text for section headers in modal */
-#addGradeModal .modal-header h2 {
-    color: #fff;
-}
-
-/* Keep form inputs with black text for readability */
-#addGradeModal .form-control {
-    color: #000;
-}
     .insight-item.warning {
       border-left-color: var(--warning);
     }
@@ -438,7 +406,7 @@
       border-radius: 8px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.05);
-      color: #000; /* Changed to black for better visibility */
+      color: #e6eef6;
       font-size: 14px;
     }
     .form-control:focus {
@@ -532,65 +500,192 @@
       color: var(--danger);
     }
 
-    /* Grade preview */
-    .grade-preview {
-      background: rgba(255,255,255,0.02);
-      padding: 16px;
-      border-radius: 8px;
-      margin-top: 16px;
-      border-left: 3px solid var(--accent);
+    /* Read-only badge */
+    .read-only-badge {
+      background: var(--muted);
+      color: var(--bg);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 8px;
     }
-    .grade-preview h4 {
-      margin: 0 0 8px 0;
+
+    /* Settings styles */
+    .settings-section {
+      margin-bottom: 24px;
+    }
+    .settings-section h4 {
       color: var(--accent);
+      margin-bottom: 12px;
+      font-size: 16px;
     }
-    
-    /* Student selection section */
-    .student-section {
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 16px;
-      max-height: 200px;
-      overflow-y: auto;
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .student-option {
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 6px;
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+    .settings-item .description {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
       cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255,255,255,0.1);
+      transition: .3s;
+      border-radius: 24px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--bg);
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background-color: var(--accent);
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Profile section */
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: #021;
+    }
+    .profile-info h3 {
+      margin: 0 0 4px 0;
+      font-size: 18px;
+    }
+    .profile-info p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* CSV Upload Modal Styles */
+    .csv-upload-section {
+      border: 2px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .csv-upload-section:hover {
+      border-color: var(--accent);
+    }
+    .csv-upload-section.drag-over {
+      border-color: var(--accent);
+      background: rgba(110,231,183,0.05);
+    }
+    .csv-info {
+      background: rgba(255,255,255,0.02);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    .csv-structure {
+      text-align: left;
+      margin-top: 10px;
+    }
+    .csv-structure ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .csv-structure li {
+      margin-bottom: 5px;
+    }
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 15px 0;
+    }
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    .file-input-label {
+      display: inline-block;
+      padding: 10px 20px;
+      background: var(--accent);
+      color: #021;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
       transition: all 0.2s;
     }
-    .student-option:hover {
-      background: rgba(255,255,255,0.05);
+    .file-input-label:hover {
+      background: var(--accent-2);
     }
-    .student-option.selected {
-      background: rgba(110,231,183,0.2);
-      border-left: 3px solid var(--accent);
-    }
-    
-    /* Subject selection section */
-    .subject-section {
-      border: 1px solid rgba(255,255,255,0.1);
+    .current-data-info {
+      background: rgba(251,113,133,0.1);
+      border: 1px solid rgba(251,113,133,0.3);
       border-radius: 8px;
-      padding: 12px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .current-data-info h4 {
+      color: var(--danger);
+      margin: 0 0 10px 0;
+    }
+
+    /* View-only notice */
+    .view-only-notice {
+      background: rgba(96,165,250,0.1);
+      border: 1px solid rgba(96,165,250,0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
       margin-bottom: 16px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .subject-option {
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .subject-option:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .subject-option.selected {
-      background: rgba(96,165,250,0.2);
-      border-left: 3px solid var(--accent-2);
+      font-size: 13px;
+      color: var(--accent-2);
     }
   </style>
 </head>
@@ -608,8 +703,10 @@
 
       <nav class="menu" id="menu">
         <button class="active" data-panel="overview">Overview</button>
-        <button data-panel="input">Input Grades</button>
-        <button data-panel="graph-data">Graph Data</button>
+        <button data-panel="students">My Students</button>
+        <button data-panel="subjects">My Subjects</button>
+        <button data-panel="topics">My Topics</button>
+        <button data-panel="graph-data">Analytics</button>
         <button data-panel="settings">Settings</button>
         <button onclick="window.location.href='{{ url_for('logout') }}'" style="color: var(--danger);">Logout</button>
       </nav>
@@ -669,13 +766,17 @@
               </div>
             </div>
 
+            <div class="view-only-notice">
+              <i class="fas fa-eye"></i> View Only Mode - Data is loaded from system CSV files
+            </div>
+
             <div style="display:flex;gap:16px;margin-bottom:20px" class="kpis">
               <div class="kpi">
-                <small>Students in System</small>
+                <small>My Students</small>
                 <strong id="kpi-students">Loading...</strong>
               </div>
               <div class="kpi">
-                <small>Subjects</small>
+                <small>My Subjects</small>
                 <strong id="kpi-subjects">Loading...</strong>
               </div>
               <div class="kpi">
@@ -717,15 +818,15 @@
                 </div>
                 <div style="display:flex;flex-direction:column;gap:16px">
                   <div class="panel mini-bar">
-                    <h4 style="margin:0;color:var(--muted);font-size:13px">By Teacher</h4>
-                    <div class="chart-container small">
-                      <canvas id="teacherChart"></canvas>
-                    </div>
-                  </div>
-                  <div class="panel mini-bar">
                     <h4 style="margin:0;color:var(--muted);font-size:13px">By Topic</h4>
                     <div class="chart-container small">
                       <canvas id="topicChart"></canvas>
+                    </div>
+                  </div>
+                  <div class="panel mini-bar">
+                    <h4 style="margin:0;color:var(--muted);font-size:13px">By Subject</h4>
+                    <div class="chart-container small">
+                      <canvas id="subjectChart"></canvas>
                     </div>
                   </div>
                 </div>
@@ -763,10 +864,6 @@
                   <div style="text-align:right">
                     <div style="font-size:13px;color:var(--danger)" id="challengingTopic">Loading...</div>
                   </div>
-                </div>
-
-                <div style="margin-top:20px">
-                  <button class="btn" id="openUpload">Upload CSV Results</button>
                 </div>
 
                 <!-- Export Options -->
@@ -815,13 +912,19 @@
         </aside>
       </div>
 
-      <!-- Input Grades Panel -->
-      <div class="content panel-content hidden" id="input-panel">
+      <!-- My Students Panel -->
+      <div class="content panel-content hidden" id="students-panel">
         <div class="col-left">
           <div class="panel">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-              <h3>Student Grade Management</h3>
-              <button class="btn" id="addGradeBtn">Add New Grade</button>
+              <h3>My Students</h3>
+              <div>
+                <button class="btn ghost" id="exportStudentsData">Export Student Data</button>
+              </div>
+            </div>
+
+            <div class="view-only-notice">
+              <i class="fas fa-eye"></i> View Only - Students are loaded from system CSV data
             </div>
 
             <div class="table-container">
@@ -830,17 +933,16 @@
                   <tr>
                     <th>Student Name</th>
                     <th>Student ID</th>
-                    <th>Subject</th>
-                    <th>Topic</th>
-                    <th>Score</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th>Grade Level</th>
+                    <th>Average Score</th>
+                    <th>Tests Taken</th>
+                    <th>Last Test Date</th>
                   </tr>
                 </thead>
-                <tbody id="gradesTable">
+                <tbody id="studentsTable">
                   <tr>
-                    <td colspan="7" style="text-align:center;color:var(--muted);padding:20px">
-                      Loading student grades...
+                    <td colspan="6" style="text-align:center;color:var(--muted);padding:20px">
+                      Loading student data...
                     </td>
                   </tr>
                 </tbody>
@@ -851,14 +953,9 @@
 
         <aside class="right">
           <div class="small-card panel">
-            <h4>Quick Actions</h4>
-            <div style="margin-top:12px">
-              <button class="btn ghost" style="width:100%;margin-bottom:8px" id="bulkUploadBtn">
-                Bulk Upload CSV
-              </button>
-              <button class="btn ghost" style="width:100%" id="exportGradesBtn">
-                Export Gradebook
-              </button>
+            <h4>Student Performance</h4>
+            <div class="chart-container small">
+              <canvas id="studentPerformanceChart"></canvas>
             </div>
           </div>
 
@@ -870,9 +967,130 @@
           </div>
 
           <div class="small-card panel">
-            <h4>Recent Activity</h4>
-            <div style="margin-top:12px" id="gradeActivity">
-              <div style="text-align:center;color:var(--muted)">No recent activity</div>
+            <h4>Student Stats</h4>
+            <div style="margin-top:12px" id="studentStats">
+              <div class="list-item">
+                <div>Total Students</div>
+                <div id="totalStudentsCount">0</div>
+              </div>
+              <div class="list-item">
+                <div>Above 80%</div>
+                <div style="color:var(--accent)" id="above80Count">0</div>
+              </div>
+              <div class="list-item">
+                <div>Below 60%</div>
+                <div style="color:var(--danger)" id="below60Count">0</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- My Subjects Panel -->
+      <div class="content panel-content hidden" id="subjects-panel">
+        <div class="col-left">
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <h3>My Subjects</h3>
+              <div>
+                <button class="btn ghost" id="exportSubjectsData">Export Subject Data</button>
+              </div>
+            </div>
+
+            <div class="view-only-notice">
+              <i class="fas fa-eye"></i> View Only - Subjects are loaded from system CSV data
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Subject Name</th>
+                    <th>Average Score</th>
+                    <th>Total Tests</th>
+                    <th>Top Topic</th>
+                    <th>Performance Trend</th>
+                  </tr>
+                </thead>
+                <tbody id="subjectsTable">
+                  <tr>
+                    <td colspan="5" style="text-align:center;color:var(--muted);padding:20px">
+                      Loading subject data...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="small-card panel">
+            <h4>Subject Performance</h4>
+            <div class="chart-container small">
+              <canvas id="subjectPerformanceChart"></canvas>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Subject Comparison</h4>
+            <div style="margin-top:12px" id="subjectComparison">
+              <div style="text-align:center;color:var(--muted)">Loading comparison...</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- My Topics Panel -->
+      <div class="content panel-content hidden" id="topics-panel">
+        <div class="col-left">
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <h3>My Topics</h3>
+              <div>
+                <button class="btn ghost" id="exportTopicsData">Export Topic Data</button>
+              </div>
+            </div>
+
+            <div class="view-only-notice">
+              <i class="fas fa-eye"></i> View Only - Topics are loaded from system CSV data
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Topic Name</th>
+                    <th>Subject</th>
+                    <th>Average Score</th>
+                    <th>Tests Taken</th>
+                    <th>Difficulty Level</th>
+                  </tr>
+                </thead>
+                <tbody id="topicsTable">
+                  <tr>
+                    <td colspan="5" style="text-align:center;color:var(--muted);padding:20px">
+                      Loading topic data...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="small-card panel">
+            <h4>Topic Performance</h4>
+            <div class="chart-container small">
+              <canvas id="topicPerformanceChart"></canvas>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Topic Insights</h4>
+            <div style="margin-top:12px" id="topicInsights">
+              <div style="text-align:center;color:var(--muted)">Loading insights...</div>
             </div>
           </div>
         </aside>
@@ -932,23 +1150,13 @@
                   </div>
                 </div>
                 <div class="panel">
-                  <h4>Teacher Performance Comparison</h4>
+                  <h4>Topic Difficulty Analysis</h4>
                   <div class="chart-container" style="height:300px">
-                    <canvas id="teacherImpactChart"></canvas>
+                    <canvas id="topicDifficultyChart"></canvas>
                   </div>
-                  <div class="chart-report" id="teacherImpactReport">
-                    Teacher comparison analysis...
+                  <div class="chart-report" id="topicDifficultyReport">
+                    Topic difficulty analysis...
                   </div>
-                </div>
-              </div>
-              
-              <div class="panel" style="margin-top:20px">
-                <h4>Topic Difficulty Analysis</h4>
-                <div class="chart-container" style="height:350px">
-                  <canvas id="topicDifficultyChart"></canvas>
-                </div>
-                <div class="chart-report" id="topicDifficultyReport">
-                  Topic difficulty analysis...
                 </div>
               </div>
             </div>
@@ -1010,106 +1218,216 @@
 
       <!-- Settings Panel -->
       <div class="content panel-content hidden" id="settings-panel">
-        <div class="panel">
-          <h3>Settings</h3>
-          <div style="margin-top:20px">
-            <p>Settings panel content goes here...</p>
+        <div class="col-left">
+          <div class="panel">
+            <h3>Account Settings</h3>
+            
+            <!-- Profile Section -->
+            <div class="profile-section">
+              <div class="profile-avatar">{{ teacher.full_name[0] }}</div>
+              <div class="profile-info">
+                <h3>{{ teacher.full_name }}</h3>
+                <p>{{ teacher.subjects }} Teacher</p>
+                <span class="read-only-badge">READ ONLY</span>
+              </div>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="settings-section">
+              <h4>Account Preferences</h4>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Email Notifications</div>
+                  <div class="description">Receive email alerts for performance updates</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Weekly Reports</div>
+                  <div class="description">Automatically generate weekly performance reports</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Dark Mode</div>
+                  <div class="description">Use dark theme (currently active)</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Display Settings -->
+            <div class="settings-section">
+              <h4>Display Preferences</h4>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Default Time Range</div>
+                  <div class="description">Default period for performance charts</div>
+                </div>
+                <select class="form-control" style="width:120px">
+                  <option>30 days</option>
+                  <option selected>90 days</option>
+                  <option>6 months</option>
+                  <option>1 year</option>
+                </select>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Chart Animation</div>
+                  <div class="description">Enable animations in charts and graphs</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-section">
+              <h4>Data Management</h4>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Auto-refresh Data</div>
+                  <div class="description">Automatically refresh data every 30 minutes</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Export Format</div>
+                  <div class="description">Default format for exported reports</div>
+                </div>
+                <select class="form-control" style="width:120px">
+                  <option>Excel (.xlsx)</option>
+                  <option selected>CSV (.csv)</option>
+                  <option>PDF (.pdf)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- System Information -->
+            <div class="settings-section">
+              <h4>System Information</h4>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Data Source</div>
+                  <div class="description">System CSV Files (Read Only)</div>
+                </div>
+                <span class="read-only-badge">READ ONLY</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Last Data Update</div>
+                  <div class="description" id="lastDataUpdate">Loading...</div>
+                </div>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">System Version</div>
+                  <div class="description">Tutoring Analytics v2.1.0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="margin-top:32px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.05)">
+              <button class="btn" style="width:100%;margin-bottom:12px">Save Settings</button>
+              <button class="btn ghost" style="width:100%">Reset to Defaults</button>
+            </div>
           </div>
         </div>
+
+        <aside class="right">
+          <div class="small-card panel">
+            <h4>Quick Actions</h4>
+            <div style="margin-top:12px">
+              <button class="btn ghost" style="width:100%;margin-bottom:8px">
+                <i class="fas fa-download"></i> Export All Data
+              </button>
+              <button class="btn ghost" style="width:100%;margin-bottom:8px">
+                <i class="fas fa-sync"></i> Refresh Data
+              </button>
+              <button class="btn ghost" style="width:100%;margin-bottom:8px">
+                <i class="fas fa-question-circle"></i> Help & Support
+              </button>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Account Security</h4>
+            <div style="margin-top:12px">
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Last Login</div>
+                  <div class="description" id="lastLoginTime">Loading...</div>
+                </div>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Account Status</div>
+                  <div class="description" style="color:var(--accent)">Active</div>
+                </div>
+              </div>
+              <button class="btn ghost" style="width:100%;margin-top:12px">
+                <i class="fas fa-shield-alt"></i> Security Settings
+              </button>
+            </div>
+          </div>
+
+          <div class="small-card panel">
+            <h4>Storage Usage</h4>
+            <div style="margin-top:12px">
+              <div class="settings-item">
+                <div>
+                  <div style="font-weight:600">Data Storage</div>
+                  <div class="description">15.2 MB / 1 GB used</div>
+                </div>
+              </div>
+              <div style="background:rgba(255,255,255,0.05);border-radius:4px;height:6px;margin:8px 0">
+                <div style="background:var(--accent);width:15%;height:100%;border-radius:4px"></div>
+              </div>
+              <div style="font-size:12px;color:var(--muted);text-align:center">15% used</div>
+            </div>
+          </div>
+        </aside>
       </div>
     </main>
   </div>
 
-  <!-- Add Grade Modal -->
-  <div class="modal-overlay hidden" id="addGradeModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Add Student Grade</h2>
-        <button class="modal-close" id="closeAddGradeModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="addGradeForm">
-          <div class="form-group">
-            <label for="studentSelect" style="color: #000;">Choose Student</label>
-            <div class="student-section" id="studentSection">
-              <div style="text-align:center;color:var(--muted)">Loading students...</div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="newSubject" style="color: #000;">Add New Subject</label>
-            <input type="text" class="form-control" id="newSubject" placeholder="Enter new subject name">
-          </div>
-          
-          <div class="form-group">
-            <label for="subjectSelect" style="color: #000;">Or Select Existing Subject</label>
-            <div class="subject-section" id="subjectSection">
-              <div style="text-align:center;color:var(--muted)">Loading subjects...</div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="topicInput" style="color: #000;">Topic</label>
-            <input type="text" class="form-control" id="topicInput" placeholder="e.g., Algebra, Grammar, Mechanics..." required>
-          </div>
-          
-          <div class="form-group">
-            <label for="scoreInput" style="color: #000;">Score (0-100)</label>
-            <input type="number" class="form-control" id="scoreInput" min="0" max="100" step="0.1" placeholder="Enter score" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="examDate" style="color: #000;">Exam Date</label>
-            <input type="date" class="form-control" id="examDate" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="dayOfWeek" style="color: #000;">Day of Week</label>
-            <select class="form-control" id="dayOfWeek">
-              <option value="">Select day...</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-              <option value="Saturday">Saturday</option>
-            </select>
-          </div>
-
-          <!-- Grade Preview -->
-          <div class="grade-preview hidden" id="gradePreview">
-            <h4>Grade Preview</h4>
-            <div id="previewContent">
-              <!-- Preview content will be populated by JavaScript -->
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn ghost" id="previewGradeBtn">Preview Grade</button>
-        <button class="btn" id="confirmAddGrade">Add Grade</button>
-      </div>
-    </div>
-  </div>
-
- <script src="{{ url_for('static', filename='js/Filcharts.js') }}"></script>
-<script>
+  <script>
     let currentPerformanceData = null;
     let teacherCharts = {};
     let currentStudents = [];
     let currentSubjects = [];
+    let currentTopics = [];
 
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Teacher dashboard loading...');
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
-        document.getElementById('examDate').valueAsDate = new Date();
+        document.getElementById('lastLoginTime').textContent = new Date().toLocaleString();
+        document.getElementById('lastDataUpdate').textContent = new Date().toLocaleString();
         
         loadOverviewData();
         setupNavigation();
         setupEventListeners();
         loadStudentsData();
-        loadGradesData();
         loadSubjectsData();
+        loadTopicsData();
         
         // Auto-hide flash messages
         setTimeout(hideFlashMessages, 5000);
@@ -1167,175 +1485,215 @@
             loadOverviewData();
         });
 
-        // Grade management buttons
-        document.getElementById('addGradeBtn')?.addEventListener('click', function() {
-            document.getElementById('addGradeModal').classList.remove('hidden');
+        // Export data buttons
+        document.getElementById('exportStudentsData')?.addEventListener('click', function() {
+            exportReport('student_progress');
         });
 
-        document.getElementById('closeAddGradeModal')?.addEventListener('click', function() {
-            document.getElementById('addGradeModal').classList.add('hidden');
-            resetGradeForm();
-        });
-
-        document.getElementById('previewGradeBtn')?.addEventListener('click', function() {
-            previewGrade();
-        });
-
-        document.getElementById('confirmAddGrade')?.addEventListener('click', function() {
-            addGrade();
-        });
-
-        document.getElementById('exportGradesBtn')?.addEventListener('click', function() {
+        document.getElementById('exportSubjectsData')?.addEventListener('click', function() {
             exportReport('performance_summary');
+        });
+
+        document.getElementById('exportTopicsData')?.addEventListener('click', function() {
+            exportReport('performance_summary');
+        });
+
+        document.getElementById('exportChartData')?.addEventListener('click', function() {
+            exportReport('comprehensive');
         });
     }
 
     function loadStudentsData() {
         fetch('/teacher/students')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load students');
+                }
+                return response.json();
+            })
             .then(students => {
                 currentStudents = students;
-                updateStudentSection(students);
+                updateStudentsTable(students);
+                updateStudentStats(students);
             })
             .catch(error => {
                 console.error('Error loading students:', error);
                 // Use sample data if API fails
                 const sampleStudents = [
-                    { id: 1, full_name: 'John Doe', student_id: 'S001' },
-                    { id: 2, full_name: 'Jane Smith', student_id: 'S002' },
-                    { id: 3, full_name: 'Michael Johnson', student_id: 'S003' },
-                    { id: 4, full_name: 'Sarah Williams', student_id: 'S004' },
-                    { id: 5, full_name: 'David Brown', student_id: 'S005' }
+                    { id: 1, full_name: 'John Doe', student_id: 'S001', grade_level: 'Form 4', avg_grade: 85, test_count: 12, last_test_date: '2024-01-15' },
+                    { id: 2, full_name: 'Jane Smith', student_id: 'S002', grade_level: 'Form 4', avg_grade: 78, test_count: 10, last_test_date: '2024-01-14' },
+                    { id: 3, full_name: 'Michael Johnson', student_id: 'S003', grade_level: 'Form 4', avg_grade: 92, test_count: 15, last_test_date: '2024-01-16' },
+                    { id: 4, full_name: 'Sarah Williams', student_id: 'S004', grade_level: 'Form 4', avg_grade: 74, test_count: 8, last_test_date: '2024-01-13' },
+                    { id: 5, full_name: 'David Brown', student_id: 'S005', grade_level: 'Form 4', avg_grade: 88, test_count: 11, last_test_date: '2024-01-15' }
                 ];
                 currentStudents = sampleStudents;
-                updateStudentSection(sampleStudents);
+                updateStudentsTable(sampleStudents);
+                updateStudentStats(sampleStudents);
             });
     }
 
-    function updateStudentSection(students) {
-        const studentSection = document.getElementById('studentSection');
-        studentSection.innerHTML = '';
-        
-        if (students.length === 0) {
-            studentSection.innerHTML = '<div style="text-align:center;color:var(--muted)">No students found</div>';
-            return;
-        }
-        
-        students.forEach(student => {
-            const studentOption = document.createElement('div');
-            studentOption.className = 'student-option';
-            studentOption.setAttribute('data-id', student.id);
-            studentOption.innerHTML = `
-                <div style="font-weight:600">${student.full_name}</div>
-                <div style="font-size:12px;color:var(--muted)">ID: ${student.student_id}</div>
-            `;
-            
-            studentOption.addEventListener('click', function() {
-                // Remove selected class from all options
-                document.querySelectorAll('.student-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                // Add selected class to clicked option
-                this.classList.add('selected');
-            });
-            
-            studentSection.appendChild(studentOption);
-        });
-    }
-
-    function loadSubjectsData() {
-        fetch('/teacher/subjects')
-            .then(response => response.json())
-            .then(subjects => {
-                currentSubjects = subjects;
-                updateSubjectSection(subjects);
-            })
-            .catch(error => {
-                console.error('Error loading subjects:', error);
-                // Use sample data if API fails
-                const sampleSubjects = ['Mathematics', 'English', 'Science', 'History', 'Physics', 'Chemistry'];
-                currentSubjects = sampleSubjects;
-                updateSubjectSection(sampleSubjects);
-            });
-    }
-
-    function updateSubjectSection(subjects) {
-        const subjectSection = document.getElementById('subjectSection');
-        subjectSection.innerHTML = '';
-        
-        if (subjects.length === 0) {
-            subjectSection.innerHTML = '<div style="text-align:center;color:var(--muted)">No subjects found</div>';
-            return;
-        }
-        
-        subjects.forEach(subject => {
-            const subjectOption = document.createElement('div');
-            subjectOption.className = 'subject-option';
-            subjectOption.textContent = subject;
-            
-            subjectOption.addEventListener('click', function() {
-                // Remove selected class from all options
-                document.querySelectorAll('.subject-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                // Add selected class to clicked option
-                this.classList.add('selected');
-                // Clear the new subject input
-                document.getElementById('newSubject').value = '';
-            });
-            
-            subjectSection.appendChild(subjectOption);
-        });
-    }
-
-    function loadGradesData() {
-        fetch('/teacher/grades')
-            .then(response => response.json())
-            .then(grades => {
-                updateGradesTable(grades);
-            })
-            .catch(error => {
-                console.error('Error loading grades:', error);
-            });
-    }
-
-    function updateGradesTable(grades) {
-        const tbody = document.getElementById('gradesTable');
+    function updateStudentsTable(students) {
+        const tbody = document.getElementById('studentsTable');
         tbody.innerHTML = '';
         
-        if (grades.length === 0) {
+        if (students.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="text-align:center;color:var(--muted);padding:20px">
-                        No grades recorded yet. Click "Add New Grade" to get started.
+                    <td colspan="6" style="text-align:center;color:var(--muted);padding:20px">
+                        No students found in your classes.
                     </td>
                 </tr>
             `;
             return;
         }
         
-        grades.forEach(grade => {
+        students.forEach(student => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${grade.student_name}</td>
-                <td>${grade.student_id}</td>
-                <td>${grade.subject}</td>
-                <td>${grade.topic}</td>
-                <td style="color: ${getScoreColor(grade.score)}; font-weight: 600">${grade.score}%</td>
-                <td>${grade.exam_date}</td>
-                <td>
-                    <button class="action-btn delete" data-id="${grade.id}">Delete</button>
+                <td>${student.full_name || 'N/A'}</td>
+                <td>${student.student_id || 'N/A'}</td>
+                <td>${student.grade_level || 'N/A'}</td>
+                <td style="color: ${getScoreColor(student.avg_grade)}; font-weight: 600">
+                    ${student.avg_grade || 0}%
                 </td>
+                <td>${student.test_count || 0}</td>
+                <td>${student.last_test_date || 'N/A'}</td>
             `;
             tbody.appendChild(row);
         });
+    }
 
-        // Add delete event listeners
-        document.querySelectorAll('.action-btn.delete').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const gradeId = this.getAttribute('data-id');
-                deleteGrade(gradeId);
+    function updateStudentStats(students) {
+        const totalStudents = students.length;
+        const above80Count = students.filter(s => s.avg_grade >= 80).length;
+        const below60Count = students.filter(s => s.avg_grade < 60).length;
+        
+        document.getElementById('totalStudentsCount').textContent = totalStudents;
+        document.getElementById('above80Count').textContent = above80Count;
+        document.getElementById('below60Count').textContent = below60Count;
+        
+        // Update KPI
+        document.getElementById('kpi-students').textContent = totalStudents;
+    }
+
+    function loadSubjectsData() {
+        fetch('/teacher/subjects')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load subjects');
+                }
+                return response.json();
+            })
+            .then(subjects => {
+                currentSubjects = subjects;
+                updateSubjectsTable(subjects);
+            })
+            .catch(error => {
+                console.error('Error loading subjects:', error);
+                // Use sample data if API fails
+                const sampleSubjects = [
+                    { name: 'Mathematics', avg_score: 78, total_tests: 45, top_topic: 'Algebra', trend: 'up' },
+                    { name: 'English', avg_score: 82, total_tests: 38, top_topic: 'Composition', trend: 'stable' },
+                    { name: 'Science', avg_score: 75, total_tests: 32, top_topic: 'Physics', trend: 'up' }
+                ];
+                currentSubjects = sampleSubjects;
+                updateSubjectsTable(sampleSubjects);
             });
+    }
+
+    function updateSubjectsTable(subjects) {
+        const tbody = document.getElementById('subjectsTable');
+        tbody.innerHTML = '';
+        
+        if (subjects.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align:center;color:var(--muted);padding:20px">
+                        No subjects found for your classes.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        subjects.forEach(subject => {
+            const row = document.createElement('tr');
+            const trendIcon = subject.trend === 'up' ? '↗' : subject.trend === 'down' ? '↘' : '→';
+            const trendColor = subject.trend === 'up' ? 'var(--accent)' : subject.trend === 'down' ? 'var(--danger)' : 'var(--muted)';
+            
+            row.innerHTML = `
+                <td>${subject.name || 'N/A'}</td>
+                <td style="color: ${getScoreColor(subject.avg_score)}; font-weight: 600">
+                    ${subject.avg_score || 0}%
+                </td>
+                <td>${subject.total_tests || 0}</td>
+                <td>${subject.top_topic || 'N/A'}</td>
+                <td style="color: ${trendColor}">${trendIcon}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        // Update KPI
+        document.getElementById('kpi-subjects').textContent = subjects.length;
+    }
+
+    function loadTopicsData() {
+        fetch('/teacher/topics')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load topics');
+                }
+                return response.json();
+            })
+            .then(topics => {
+                currentTopics = topics;
+                updateTopicsTable(topics);
+            })
+            .catch(error => {
+                console.error('Error loading topics:', error);
+                // Use sample data if API fails
+                const sampleTopics = [
+                    { name: 'Algebra', subject: 'Mathematics', avg_score: 72, test_count: 15, difficulty: 'High' },
+                    { name: 'Geometry', subject: 'Mathematics', avg_score: 78, test_count: 12, difficulty: 'Medium' },
+                    { name: 'Composition', subject: 'English', avg_score: 85, test_count: 10, difficulty: 'Low' },
+                    { name: 'Grammar', subject: 'English', avg_score: 79, test_count: 8, difficulty: 'Medium' },
+                    { name: 'Physics', subject: 'Science', avg_score: 74, test_count: 9, difficulty: 'High' }
+                ];
+                currentTopics = sampleTopics;
+                updateTopicsTable(sampleTopics);
+            });
+    }
+
+    function updateTopicsTable(topics) {
+        const tbody = document.getElementById('topicsTable');
+        tbody.innerHTML = '';
+        
+        if (topics.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align:center;color:var(--muted);padding:20px">
+                        No topics found for your classes.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        topics.forEach(topic => {
+            const row = document.createElement('tr');
+            const difficultyColor = topic.difficulty === 'High' ? 'var(--danger)' : 
+                                  topic.difficulty === 'Medium' ? 'var(--warning)' : 'var(--accent)';
+            
+            row.innerHTML = `
+                <td>${topic.name || 'N/A'}</td>
+                <td>${topic.subject || 'N/A'}</td>
+                <td style="color: ${getScoreColor(topic.avg_score)}; font-weight: 600">
+                    ${topic.avg_score || 0}%
+                </td>
+                <td>${topic.test_count || 0}</td>
+                <td style="color: ${difficultyColor}">${topic.difficulty || 'N/A'}</td>
+            `;
+            tbody.appendChild(row);
         });
     }
 
@@ -1344,149 +1702,6 @@
         if (score >= 70) return 'var(--accent-2)';
         if (score >= 60) return 'var(--warning)';
         return 'var(--danger)';
-    }
-
-    function previewGrade() {
-        const selectedStudent = document.querySelector('.student-option.selected');
-        const newSubject = document.getElementById('newSubject').value;
-        const selectedSubject = document.querySelector('.subject-option.selected');
-        const topic = document.getElementById('topicInput').value;
-        const score = document.getElementById('scoreInput').value;
-        const examDate = document.getElementById('examDate').value;
-        const dayOfWeek = document.getElementById('dayOfWeek').value;
-
-        if (!selectedStudent || (!newSubject && !selectedSubject) || !topic || !score || !examDate) {
-            alert('Please fill all required fields before previewing.');
-            return;
-        }
-
-        const studentId = selectedStudent.getAttribute('data-id');
-        const student = currentStudents.find(s => s.id == studentId);
-        const subject = newSubject || selectedSubject.textContent;
-        
-        const previewContent = document.getElementById('previewContent');
-        const gradePreview = document.getElementById('gradePreview');
-
-        previewContent.innerHTML = `
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
-                <div><strong>Student:</strong></div>
-                <div>${student?.full_name || 'N/A'}</div>
-                
-                <div><strong>Subject:</strong></div>
-                <div>${subject}</div>
-                
-                <div><strong>Topic:</strong></div>
-                <div>${topic}</div>
-                
-                <div><strong>Score:</strong></div>
-                <div style="color: ${getScoreColor(score)}; font-weight: 600">${score}%</div>
-                
-                <div><strong>Grade:</strong></div>
-                <div>${getGradeFromScore(score)}</div>
-                
-                <div><strong>Date:</strong></div>
-                <div>${examDate}</div>
-                
-                ${dayOfWeek ? `
-                    <div><strong>Day:</strong></div>
-                    <div>${dayOfWeek}</div>
-                ` : ''}
-            </div>
-        `;
-
-        gradePreview.classList.remove('hidden');
-    }
-
-    function addGrade() {
-        const selectedStudent = document.querySelector('.student-option.selected');
-        const newSubject = document.getElementById('newSubject').value;
-        const selectedSubject = document.querySelector('.subject-option.selected');
-        const topic = document.getElementById('topicInput').value;
-        const score = parseFloat(document.getElementById('scoreInput').value);
-        const examDate = document.getElementById('examDate').value;
-        const dayOfWeek = document.getElementById('dayOfWeek').value;
-
-        if (!selectedStudent || (!newSubject && !selectedSubject) || !topic || !score || !examDate) {
-            alert('Please fill all required fields.');
-            return;
-        }
-
-        const studentId = selectedStudent.getAttribute('data-id');
-        const subject = newSubject || selectedSubject.textContent;
-
-        const gradeData = {
-            student_id: parseInt(studentId),
-            subject: subject,
-            topic: topic,
-            score: score,
-            exam_date: examDate,
-            day_of_week: dayOfWeek || null
-        };
-
-        fetch('/teacher/add_grade', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(gradeData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Grade added successfully!');
-                document.getElementById('addGradeModal').classList.add('hidden');
-                resetGradeForm();
-                loadGradesData();
-                loadOverviewData(); // Refresh charts
-                
-                // If a new subject was added, refresh the subject list
-                if (newSubject && !currentSubjects.includes(newSubject)) {
-                    loadSubjectsData();
-                }
-            } else {
-                alert('Error adding grade: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error adding grade:', error);
-            alert('Error adding grade. Please try again.');
-        });
-    }
-
-    function deleteGrade(gradeId) {
-        if (confirm('Are you sure you want to delete this grade? This action cannot be undone.')) {
-            // This would call a delete endpoint when implemented
-            alert('Delete functionality would be implemented here for grade ID: ' + gradeId);
-            // For now, just reload the data
-            loadGradesData();
-        }
-    }
-
-    function resetGradeForm() {
-        document.getElementById('addGradeForm').reset();
-        document.getElementById('examDate').valueAsDate = new Date();
-        document.getElementById('gradePreview').classList.add('hidden');
-        
-        // Clear selected options
-        document.querySelectorAll('.student-option.selected').forEach(opt => {
-            opt.classList.remove('selected');
-        });
-        document.querySelectorAll('.subject-option.selected').forEach(opt => {
-            opt.classList.remove('selected');
-        });
-    }
-
-    function getGradeFromScore(score) {
-        if (score >= 90) return 'A';
-        if (score >= 85) return 'A-';
-        if (score >= 80) return 'B+';
-        if (score >= 75) return 'B';
-        if (score >= 70) return 'B-';
-        if (score >= 65) return 'C+';
-        if (score >= 60) return 'C';
-        if (score >= 55) return 'C-';
-        if (score >= 50) return 'D';
-        return 'F';
     }
 
     function loadOverviewData() {
@@ -1523,27 +1738,29 @@
             
             // Small charts
             createDayChart(data.day_averages);
-            createTeacherChart(data.teacher_averages);
-            createTopicChart(data.topic_averages);
+            createTopicMiniChart(data.topic_averages);
+            createSubjectMiniChart(data.subject_averages);
             
             // Graph Data Panel charts
             createTrendChart(data);
             createSubjectBarChart(data.subject_averages);
             createTopicBarChart(data.topic_averages);
             createDayImpactChart(data.day_averages);
-            createTeacherImpactChart(data.teacher_averages);
             createTopicDifficultyChart(data.topic_averages);
             createStudentComparisonChart();
             
-            // Grade distribution chart
-            createGradeDistributionChart(data);
+            // Additional charts
+            createStudentPerformanceChart();
+            createGradeDistributionChart();
+            createSubjectPerformanceChart();
+            createTopicPerformanceChart();
             
         } catch (error) {
             console.error('Error initializing charts:', error);
         }
     }
 
-    // CHART CREATION FUNCTIONS - ALL RESTORED
+    // CHART CREATION FUNCTIONS
 
     function createAreaChart(data) {
         const ctx = document.getElementById('areaChart');
@@ -1628,39 +1845,7 @@
         }
     }
 
-    function createTeacherChart(teacherData) {
-        const ctx = document.getElementById('teacherChart');
-        if (!ctx) return;
-
-        const data = teacherData || { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78 };
-        const labels = Object.keys(data);
-        const values = Object.values(data);
-
-        if (teacherCharts.teacherChart) teacherCharts.teacherChart.destroy();
-        
-        teacherCharts.teacherChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: 'rgba(96,165,250,0.8)',
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { display: false }
-                }
-            }
-        });
-    }
-
-    function createTopicChart(topicData) {
+    function createTopicMiniChart(topicData) {
         const ctx = document.getElementById('topicChart');
         if (!ctx) return;
 
@@ -1677,6 +1862,38 @@
                 datasets: [{
                     data: values,
                     backgroundColor: 'rgba(249,115,22,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                }
+            }
+        });
+    }
+
+    function createSubjectMiniChart(subjectData) {
+        const ctx = document.getElementById('subjectChart');
+        if (!ctx) return;
+
+        const data = subjectData || { Mathematics: 78, English: 82, Science: 75 };
+        const labels = Object.keys(data);
+        const values = Object.values(data);
+
+        if (teacherCharts.subjectChart) teacherCharts.subjectChart.destroy();
+        
+        teacherCharts.subjectChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: 'rgba(96,165,250,0.8)',
                     borderRadius: 6
                 }]
             },
@@ -1824,35 +2041,6 @@
         });
     }
 
-    function createTeacherImpactChart(teacherData) {
-        const ctx = document.getElementById('teacherImpactChart');
-        if (!ctx) return;
-
-        const data = teacherData || { 'Kamau': 80, 'Moraa': 75, 'Njoroge': 78, 'Atieno': 76 };
-        const labels = Object.keys(data);
-        const values = Object.values(data);
-
-        if (teacherCharts.teacherImpactChart) teacherCharts.teacherImpactChart.destroy();
-        
-        teacherCharts.teacherImpactChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Average Score',
-                    data: values,
-                    backgroundColor: 'rgba(236,72,153,0.8)',
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
-            }
-        });
-    }
-
     function createTopicDifficultyChart(topicData) {
         const ctx = document.getElementById('topicDifficultyChart');
         if (!ctx) return;
@@ -1911,27 +2099,47 @@
         });
     }
 
-    function createGradeDistributionChart(data) {
-        const ctx = document.getElementById('gradeDistributionChart');
+    function createStudentPerformanceChart() {
+        const ctx = document.getElementById('studentPerformanceChart');
         if (!ctx) return;
 
-        // Sample grade distribution
-        const distributions = {
-            'A (90-100)': 15,
-            'B (80-89)': 25,
-            'C (70-79)': 35,
-            'D (60-69)': 15,
-            'F (0-59)': 10
-        };
+        if (teacherCharts.studentPerformanceChart) teacherCharts.studentPerformanceChart.destroy();
+        
+        teacherCharts.studentPerformanceChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Above 80%', '70-79%', '60-69%', 'Below 60%'],
+                datasets: [{
+                    data: [8, 12, 5, 2],
+                    backgroundColor: [
+                        'rgba(110,231,183,0.8)',
+                        'rgba(96,165,250,0.8)',
+                        'rgba(245,158,11,0.8)',
+                        'rgba(239,68,68,0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '60%'
+            }
+        });
+    }
+
+    function createGradeDistributionChart() {
+        const ctx = document.getElementById('gradeDistributionChart');
+        if (!ctx) return;
 
         if (teacherCharts.gradeDistributionChart) teacherCharts.gradeDistributionChart.destroy();
         
         teacherCharts.gradeDistributionChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: Object.keys(distributions),
+                labels: ['A (90-100)', 'B (80-89)', 'C (70-79)', 'D (60-69)', 'F (0-59)'],
                 datasets: [{
-                    data: Object.values(distributions),
+                    data: [15, 25, 35, 15, 10],
                     backgroundColor: [
                         'rgba(110,231,183,0.8)',
                         'rgba(96,165,250,0.8)',
@@ -1950,21 +2158,65 @@
         });
     }
 
+    function createSubjectPerformanceChart() {
+        const ctx = document.getElementById('subjectPerformanceChart');
+        if (!ctx) return;
+
+        if (teacherCharts.subjectPerformanceChart) teacherCharts.subjectPerformanceChart.destroy();
+        
+        teacherCharts.subjectPerformanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Mathematics', 'English', 'Science'],
+                datasets: [{
+                    label: 'Average Score',
+                    data: [78, 82, 75],
+                    backgroundColor: 'rgba(96,165,250,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function createTopicPerformanceChart() {
+        const ctx = document.getElementById('topicPerformanceChart');
+        if (!ctx) return;
+
+        if (teacherCharts.topicPerformanceChart) teacherCharts.topicPerformanceChart.destroy();
+        
+        teacherCharts.topicPerformanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Algebra', 'Geometry', 'Composition', 'Grammar', 'Physics'],
+                datasets: [{
+                    label: 'Average Score',
+                    data: [72, 78, 85, 79, 74],
+                    backgroundColor: 'rgba(139,92,246,0.8)',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                indexAxis: 'y'
+            }
+        });
+    }
+
     function updateKPIs(data) {
         // Update KPI cards
         const scores = data.scores || [];
         const avgScore = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '0';
         
-        // Update student count
-        document.getElementById('kpi-students').textContent = currentStudents.length;
-
         document.getElementById('kpi-avg').textContent = `${avgScore}%`;
         document.getElementById('kpi-tests').textContent = scores.length;
         document.getElementById('totalTests').textContent = scores.length;
-        
-        // Update subjects count
-        const subjects = Object.keys(data.subject_averages || {});
-        document.getElementById('kpi-subjects').textContent = subjects.length;
         
         // Find best day
         const dayData = data.day_averages || {};
@@ -1985,7 +2237,11 @@
         // Update top students
         const topStudentsList = document.getElementById('topStudentsList');
         if (topStudentsList && currentStudents.length > 0) {
-            topStudentsList.innerHTML = currentStudents.slice(0, 3).map(student => `
+            const topStudents = currentStudents
+                .sort((a, b) => (b.avg_grade || 0) - (a.avg_grade || 0))
+                .slice(0, 3);
+                
+            topStudentsList.innerHTML = topStudents.map(student => `
                 <div class="list-item">
                     <div>${student.full_name.split(' ')[0]}</div>
                     <div style="color:var(--accent)">${student.avg_grade || 'N/A'}%</div>
@@ -2049,9 +2305,15 @@
         if (panel === 'graph-data') {
             // Refresh data when switching to graph data panel
             loadOverviewData();
-        } else if (panel === 'input') {
-            // Refresh grades data when switching to input panel
-            loadGradesData();
+        } else if (panel === 'students') {
+            // Refresh students data
+            loadStudentsData();
+        } else if (panel === 'subjects') {
+            // Refresh subjects data
+            loadSubjectsData();
+        } else if (panel === 'topics') {
+            // Refresh topics data
+            loadTopicsData();
         }
     }
 
@@ -2076,6 +2338,6 @@
             msg.style.display = 'none';
         });
     }
-</script>
+  </script>
 </body>
 </html>
